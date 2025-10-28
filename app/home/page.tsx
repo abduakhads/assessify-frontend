@@ -1,9 +1,5 @@
-// home/page.tsx
+import { redirect } from "next/navigation";
 
-export default async function Home() {
-  
-
-  return (<div>
-      
-    </div>);
+export default function Home() {
+  redirect("/home/classrooms");
 }

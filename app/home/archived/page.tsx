@@ -96,12 +96,14 @@ export default function ArchivedQuizzes() {
       </div>
 
       {archivedAttempts.length === 0 ? (
-        <div className="text-center py-12 border-2 border-dashed rounded-lg">
-          <Archive className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-          <h3 className="text-lg font-semibold mb-2">No archived quizzes</h3>
-          <p className="text-muted-foreground">
-            Completed quiz attempts will appear here
-          </p>
+        <div className="flex items-center justify-center min-h-[70vh]">
+          <div className="text-center py-12">
+            <Archive className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+            <h3 className="text-lg font-semibold mb-2">No archived quizzes</h3>
+            <p className="text-muted-foreground">
+              Completed quiz attempts will appear here
+            </p>
+          </div>
         </div>
       ) : (
         <div className="space-y-4">

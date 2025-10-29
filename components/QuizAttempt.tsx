@@ -306,7 +306,7 @@ export default function QuizAttempt({
                     htmlFor={`answer-${answerId}`}
                     className="flex-1 cursor-pointer"
                   >
-                    {answer}
+                    {typeof answer === "string" ? answer : answer?.text}
                   </Label>
                 </div>
               );

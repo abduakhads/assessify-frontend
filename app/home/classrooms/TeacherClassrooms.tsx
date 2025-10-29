@@ -1675,7 +1675,7 @@ export default function TeacherClassrooms() {
                 </Label>
                 <Input
                   id="written-answer"
-                  value={answers[0]?.text || ""}
+                  value={answers[0]?.text ?? ""}
                   onChange={(e) => {
                     const newAnswers = [
                       { text: e.target.value, is_correct: true },

@@ -69,3 +69,27 @@ export interface NextQuestionResponse {
   question_attempt: number | null;
   next_question: Question | null;
 }
+
+// Analytics Types
+export interface QuizAttemptStats {
+  id: number;
+  student: User;
+  started_at: string;
+  completed_at: string;
+  score: string;
+}
+
+export interface StudentAnswer {
+  id: number;
+  question_attempt: number;
+  text: string;
+  is_correct: boolean;
+}
+
+export interface QuestionAttemptDetail {
+  id: number;
+  question: Question;
+  started_at: string;
+  submitted_at: string;
+  student_answers: StudentAnswer[];
+}

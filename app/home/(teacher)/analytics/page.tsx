@@ -232,7 +232,11 @@ export default function Analytics() {
 
       if (res.ok) {
         const data = await res.json();
-        setSelectedAttempt(data);
+        // Preserve the student object from the current selectedAttempt
+        setSelectedAttempt({
+          ...data,
+          student: selectedAttempt.student,
+        });
         setToast({
           message: "Score updated successfully",
           type: "success",
@@ -345,7 +349,7 @@ export default function Analytics() {
             <p className="text-muted-foreground">No quizzes found</p>
           ) : (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {quizzes.map((quiz) => (
+              {[...quizzes].reverse().map((quiz) => (
                 <div
                   key={quiz.id}
                   onClick={() => handleQuizClick(quiz)}
@@ -405,7 +409,7 @@ export default function Analytics() {
             <p className="text-muted-foreground">No attempts found</p>
           ) : (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {attempts.map((attempt) => (
+              {[...attempts].reverse().map((attempt) => (
                 <div
                   key={attempt.id}
                   onClick={() => handleAttemptClick(attempt)}

@@ -15,6 +15,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { logout } from "@/utils/auth";
 
 interface StudentSidebarProps {
   className?: string;
@@ -26,9 +27,7 @@ export function StudentSidebar({ className }: StudentSidebarProps) {
   const [open, setOpen] = useState(false);
 
   const handleLogout = async () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    router.push("/logout");
+    await logout();
   };
 
   const handleClassroomsClick = (e: React.MouseEvent) => {

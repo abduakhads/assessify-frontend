@@ -59,12 +59,19 @@ export const logout = async () => {
   
   if (refreshToken) {
     try {
-      // Import axios here to avoid circular dependency
-      const { default: api } = await import('@/lib/axios');
+      // Send blacklist request to the server using fetch directly
+      // to avoid circular dependency with axios
+      const accessToken = getAccessToken();
       
-      // Send blacklist request to the server
-      await api.post('/token/blacklist/', {
-        refresh: refreshToken
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/token/blacklist/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          refresh: refreshToken
+        })
       });
     } catch (error) {
       console.error('Error blacklisting token:', error);

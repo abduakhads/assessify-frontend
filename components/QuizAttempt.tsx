@@ -16,7 +16,11 @@ interface QuizAttemptProps {
   onComplete: () => void;
 }
 
-export default function QuizAttempt({ attemptId, quizId, onComplete }: QuizAttemptProps) {
+export default function QuizAttempt({
+  attemptId,
+  quizId,
+  onComplete,
+}: QuizAttemptProps) {
   const router = useRouter();
   const [questionData, setQuestionData] = useState<NextQuestionResponse | null>(
     null
@@ -56,8 +60,9 @@ export default function QuizAttempt({ attemptId, quizId, onComplete }: QuizAttem
 
         // Check if quiz is completed
         if (data.next_question === null) {
-          // Quiz completed, redirect back
-          router.push("/home/classrooms");
+          console.log("Quiz completed! Calling onComplete callback");
+          // Quiz completed, call onComplete callback
+          onComplete();
           return;
         }
 
@@ -108,7 +113,9 @@ export default function QuizAttempt({ attemptId, quizId, onComplete }: QuizAttem
         question_attempt: questionData.question_attempt,
         answers: questionData.next_question?.is_written
           ? [writtenAnswer]
-          : selectedAnswers.map(String),
+          : selectedAnswers.map(
+              (index) => questionData.next_question?.answers[index] || ""
+            ),
       };
 
       const res = await fetch(

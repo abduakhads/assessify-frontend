@@ -1,9 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Dialog } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Toast } from "@/components/ui/toast";
 import QuizAttempt from "@/components/QuizAttempt";
 import type { Classroom, Quiz, StudentQuizAttempt } from "@/types";
 
@@ -20,6 +24,13 @@ export default function StudentClassrooms() {
   const [loadingQuizzes, setLoadingQuizzes] = useState(false);
   const [loadingAttempts, setLoadingAttempts] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showEnrollDialog, setShowEnrollDialog] = useState(false);
+  const [enrollCode, setEnrollCode] = useState("");
+  const [enrollLoading, setEnrollLoading] = useState(false);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
 
   useEffect(() => {
     async function fetchClassrooms() {
@@ -57,6 +68,72 @@ export default function StudentClassrooms() {
 
     fetchClassrooms();
   }, []);
+
+  const handleEnroll = async () => {
+    if (!enrollCode.trim()) {
+      setToast({ message: "Please enter an enrollment code", type: "error" });
+      return;
+    }
+
+    setEnrollLoading(true);
+    setToast(null);
+
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (!accessToken) {
+      setToast({ message: "No access token found", type: "error" });
+      setEnrollLoading(false);
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/enroll/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({
+            code: enrollCode,
+          }),
+        }
+      );
+
+      if (res.status === 201) {
+        const data = await res.json();
+        setToast({ message: data.detail, type: "success" });
+        setShowEnrollDialog(false);
+        setEnrollCode("");
+        // Refresh classrooms list
+        const classroomsRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/classrooms`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        if (classroomsRes.ok) {
+          const classroomsData = await classroomsRes.json();
+          setClassrooms(classroomsData);
+        }
+      } else {
+        try {
+          const data = await res.json();
+          setToast({ message: data.detail, type: "error" });
+        } catch {
+          setToast({ message: "Failed to enroll in classroom", type: "error" });
+        }
+      }
+    } catch (err) {
+      console.error("Error enrolling in classroom", err);
+      setToast({ message: "Network error. Please try again.", type: "error" });
+    } finally {
+      setEnrollLoading(false);
+    }
+  };
 
   const fetchQuizzes = async (classroomId: number) => {
     const accessToken = localStorage.getItem("accessToken");
@@ -192,11 +269,14 @@ export default function StudentClassrooms() {
     setActiveAttemptId(attemptId);
   };
 
-  const handleQuizComplete = () => {
+  const handleQuizComplete = async () => {
+    console.log("handleQuizComplete called - resetting activeAttemptId");
     // Reset active attempt and refresh the attempts list
     setActiveAttemptId(null);
     if (selectedQuiz) {
-      fetchAttempts(selectedQuiz.id);
+      console.log("Fetching attempts for quiz:", selectedQuiz.id);
+      await fetchAttempts(selectedQuiz.id);
+      console.log("Attempts fetched, should now show attempts list");
     }
   };
 
@@ -411,9 +491,9 @@ export default function StudentClassrooms() {
                   )}
                 </div>
                 <div className="space-y-1 text-sm text-muted-foreground">
-                    <p>Questions: {quiz.question_count}</p>
+                  <p>Questions: {quiz.question_count}</p>
                   <div className="flex flex-row justify-between ">
-                  <p>Deadline: {formatDate(quiz.deadline)}</p>
+                    <p>Deadline: {formatDate(quiz.deadline)}</p>
                     {/* <p>ID: {quiz.id}</p> */}
                   </div>
                 </div>
@@ -437,7 +517,25 @@ export default function StudentClassrooms() {
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold mb-4">Classrooms</h1>
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-3xl font-bold">Classrooms</h1>
+        <Button
+          onClick={() => setShowEnrollDialog(true)}
+          className="cursor-pointer"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Enroll in Classroom
+        </Button>
+      </div>
+
       <p className="text-muted-foreground mb-8">Welcome to your classrooms</p>
 
       {classrooms.length === 0 ? (
@@ -458,6 +556,58 @@ export default function StudentClassrooms() {
           ))}
         </div>
       )}
+
+      {/* Enroll Dialog */}
+      <Dialog
+        isOpen={showEnrollDialog}
+        onClose={() => {
+          setShowEnrollDialog(false);
+          setEnrollCode("");
+        }}
+        title="Enroll in Classroom"
+      >
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="enroll-code">Enrollment Code</Label>
+            <Input
+              id="enroll-code"
+              value={enrollCode}
+              onChange={(e) => setEnrollCode(e.target.value)}
+              placeholder="Enter enrollment code (e.g., PF5TOV94)"
+              maxLength={8}
+              className="uppercase"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleEnroll();
+                }
+              }}
+            />
+            <p className="text-xs text-muted-foreground">
+              Enter the 8-character code provided by your teacher
+            </p>
+          </div>
+
+          <div className="flex gap-2 justify-end">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowEnrollDialog(false);
+                setEnrollCode("");
+              }}
+              className="cursor-pointer"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleEnroll}
+              disabled={enrollLoading}
+              className="cursor-pointer"
+            >
+              {enrollLoading ? "Enrolling..." : "Enroll"}
+            </Button>
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 }

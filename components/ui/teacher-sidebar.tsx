@@ -48,33 +48,9 @@ export function TeacherSidebar({ className }: TeacherSidebarProps) {
         asChild
         onClick={() => setOpen(false)}
       >
-        <Link href="/home/dashboard">
+        <Link href="/home/classrooms">
           <Home className="h-4 w-4" />
-          Dashboard
-        </Link>
-      </Button>
-
-      <Button
-        variant="ghost"
-        className="w-full justify-start gap-2"
-        asChild
-        onClick={() => setOpen(false)}
-      >
-        <Link href="/home/quizzes">
-          <BookOpen className="h-4 w-4" />
-          Quizzes
-        </Link>
-      </Button>
-
-      <Button
-        variant="ghost"
-        className="w-full justify-start gap-2"
-        asChild
-        onClick={() => setOpen(false)}
-      >
-        <Link href="/home/quizzes/create">
-          <Plus className="h-4 w-4" />
-          Create Quiz
+          Classrooms
         </Link>
       </Button>
 
@@ -108,18 +84,6 @@ export function TeacherSidebar({ className }: TeacherSidebarProps) {
         asChild
         onClick={() => setOpen(false)}
       >
-        <Link href="/home/archived">
-          <Archive className="h-4 w-4" />
-          Archived Quizzes
-        </Link>
-      </Button>
-
-      <Button
-        variant="ghost"
-        className="w-full justify-start gap-2"
-        asChild
-        onClick={() => setOpen(false)}
-      >
         <Link href="/home/profile">
           <User className="h-4 w-4" />
           Profile
@@ -132,12 +96,12 @@ export function TeacherSidebar({ className }: TeacherSidebarProps) {
     <>
       {/* Mobile Header with Menu Button */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between p-4 border-b bg-background">
-        <div className="flex items-center">
+        <div className="flex items-center px-4 py-2">
           <Image
             src="/logo.png"
             alt="Assessify Logo"
-            width={48}
-            height={48}
+            width={140}
+            height={140}
             className="object-contain"
           />
         </div>
@@ -150,12 +114,12 @@ export function TeacherSidebar({ className }: TeacherSidebarProps) {
           <SheetContent side="left" className="w-64 p-0">
             <SheetHeader className="p-4 border-b">
               <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-              <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center py-2">
                 <Image
                   src="/logo.png"
                   alt="Assessify Logo"
-                  width={48}
-                  height={48}
+                  width={140}
+                  height={140}
                   className="object-contain"
                 />
               </div>
@@ -187,12 +151,12 @@ export function TeacherSidebar({ className }: TeacherSidebarProps) {
       >
         {/* Logo Section */}
         <div className="p-4 border-b">
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center py-2">
             <Image
               src="/logo.png"
               alt="Assessify Logo"
-              width={56}
-              height={56}
+              width={140}
+              height={140}
               className="object-contain"
             />
           </div>

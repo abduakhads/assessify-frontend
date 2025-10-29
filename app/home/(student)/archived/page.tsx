@@ -101,7 +101,7 @@ export default function ArchivedQuizzes() {
             <Archive className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
             <h3 className="text-lg font-semibold mb-2">No archived quizzes</h3>
             <p className="text-muted-foreground">
-              Completed quiz attempts will appear here
+              Quiz attempts from classrooms you were removed from will appear here
             </p>
           </div>
         </div>

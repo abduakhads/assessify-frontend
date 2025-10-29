@@ -13,7 +13,14 @@ export interface Classroom {
   name: string;
   description?: string;
   teacher: User;
+  students?: User[];
   student_count?: number;
+}
+
+export interface EnrollmentCode {
+  code: string;
+  classroom: number;
+  is_active: boolean;
 }
 
 // Quiz Types
@@ -54,7 +61,7 @@ export interface Question {
   has_multiple_answers: boolean;
   is_written: boolean;
   time_limit: number;
-  answers: [];
+  answers: Answer[];
 }
 
 export interface NextQuestionResponse {

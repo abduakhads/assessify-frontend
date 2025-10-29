@@ -322,7 +322,11 @@ export default function StudentClassrooms() {
 
     return (
       <div className="p-8">
-        <Button variant="ghost" onClick={handleBackToQuizzes} className="mb-4 cursor-pointer">
+        <Button
+          variant="ghost"
+          onClick={handleBackToQuizzes}
+          className="mb-4 cursor-pointer"
+        >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Quizzes
         </Button>
@@ -362,7 +366,11 @@ export default function StudentClassrooms() {
                 </Button>
               )}
               {canStartNewAttempt && (
-                <Button onClick={handleStartAttempt} variant="default" className="cursor-pointer">
+                <Button
+                  onClick={handleStartAttempt}
+                  variant="default"
+                  className="cursor-pointer"
+                >
                   Start New Attempt
                 </Button>
               )}
@@ -477,7 +485,7 @@ export default function StudentClassrooms() {
           </p>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {quizzes.map((quiz) => (
+            {[...quizzes].reverse().map((quiz) => (
               <div
                 key={quiz.id}
                 onClick={() => handleQuizClick(quiz)}
@@ -485,11 +493,15 @@ export default function StudentClassrooms() {
               >
                 <div className="flex items-start justify-between mb-2">
                   <h3 className="font-semibold">{quiz.title}</h3>
-                  {quiz.is_active && (
-                    <span className="text-xs bg-green-500/10 text-green-500 px-2 py-1 rounded-full">
-                      Active
-                    </span>
-                  )}
+                  <span
+                    className={`text-xs px-2 py-1 rounded-full ${
+                      quiz.is_active
+                        ? "bg-green-500/10 text-green-500"
+                        : "bg-gray-500/10 text-gray-500"
+                    }`}
+                  >
+                    {quiz.is_active ? "Active" : "Inactive"}
+                  </span>
                 </div>
                 <div className="space-y-1 text-sm text-muted-foreground">
                   <p>Questions: {quiz.question_count}</p>

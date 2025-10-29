@@ -1,15 +1,17 @@
 "use client";
-import { useEffect, useState } from "react";
-import { StudentSidebar } from "../student-sidebar";
-import { TeacherSidebar } from "../teacher-sidebar";
 
-export default function Wrapper({ children }: { children: React.ReactNode }) {
+import { useEffect, useState } from "react";
+import StudentClassrooms from "./StudentClassrooms";
+import TeacherClassrooms from "./TeacherClassrooms";
+
+export default function ClassroomsPage() {
   const [role, setRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchRole() {
       const accessToken = localStorage.getItem("accessToken");
+
       if (!accessToken) {
         setLoading(false);
         return;
@@ -24,6 +26,7 @@ export default function Wrapper({ children }: { children: React.ReactNode }) {
             },
           }
         );
+
         if (res.ok) {
           const data = await res.json();
           setRole(data.role);
@@ -40,19 +43,17 @@ export default function Wrapper({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">Loading...</h1>
-          <p className="text-muted-foreground">Setting up your workspace</p>
-        </div>
+      <div className="p-8">
+        <h1 className="text-3xl font-bold mb-4">Classrooms</h1>
+        <p className="text-muted-foreground">Loading...</p>
       </div>
     );
   }
 
-  return (
-    <div className="flex h-screen overflow-hidden">
-      {role === "teacher" ? <TeacherSidebar /> : <StudentSidebar />}
-      <main className="flex-1 overflow-auto pt-16 lg:pt-0">{children}</main>
-    </div>
-  );
+  // Render appropriate component based on role
+  if (role === "teacher") {
+    return <TeacherClassrooms />;
+  }
+
+  return <StudentClassrooms />;
 }

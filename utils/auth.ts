@@ -1,14 +1,29 @@
 export const setTokens = (access: string, refresh: string) => {
-  localStorage.setItem("accessToken", access);
-  localStorage.setItem("refreshToken", refresh);
+  if (typeof window !== "undefined") {
+    localStorage.setItem("accessToken", access);
+    localStorage.setItem("refreshToken", refresh);
+  }
 };
 
-export const getAccessToken = () => localStorage.getItem("accessToken");
-export const getRefreshToken = () => localStorage.getItem("refreshToken");
+export const getAccessToken = () => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("accessToken");
+  }
+  return null;
+};
+
+export const getRefreshToken = () => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("refreshToken");
+  }
+  return null;
+};
 
 export const clearTokens = () => {
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+  }
 };
 
 export const isTokenExpired = (token: string): boolean => {
@@ -44,12 +59,19 @@ export const logout = async () => {
   
   if (refreshToken) {
     try {
-      // Import axios here to avoid circular dependency
-      const { default: api } = await import('@/lib/axios');
+      // Send blacklist request to the server using fetch directly
+      // to avoid circular dependency with axios
+      const accessToken = getAccessToken();
       
-      // Send blacklist request to the server
-      await api.post('/token/blacklist/', {
-        refresh: refreshToken
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/token/blacklist/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          refresh: refreshToken
+        })
       });
     } catch (error) {
       console.error('Error blacklisting token:', error);

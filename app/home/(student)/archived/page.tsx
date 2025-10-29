@@ -68,6 +68,18 @@ export default function ArchivedQuizzes() {
     return "text-red-600";
   };
 
+  // Group attempts by quiz and count attempts per quiz
+  const getQuizAttemptNumber = (attempt: StudentQuizAttempt) => {
+    const quizAttempts = archivedAttempts
+      .filter((a) => a.quiz === attempt.quiz)
+      .sort(
+        (a, b) =>
+          new Date(a.started_at).getTime() - new Date(b.started_at).getTime()
+      );
+
+    return quizAttempts.findIndex((a) => a.id === attempt.id) + 1;
+  };
+
   if (loading) {
     return (
       <div className="p-8">
@@ -101,7 +113,8 @@ export default function ArchivedQuizzes() {
             <Archive className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
             <h3 className="text-lg font-semibold mb-2">No archived quizzes</h3>
             <p className="text-muted-foreground">
-              Quiz attempts from classrooms you were removed from will appear here
+              Quiz attempts from classrooms you were removed from will appear
+              here
             </p>
           </div>
         </div>
@@ -111,19 +124,19 @@ export default function ArchivedQuizzes() {
             Total archived attempts: {archivedAttempts.length}
           </div>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {[...archivedAttempts].reverse().map((attempt, idx) => (
+            {[...archivedAttempts].reverse().map((attempt) => (
               <div
                 key={attempt.id}
                 className="p-6 border rounded-lg bg-card hover:shadow-md transition-shadow"
               >
                 <div className="space-y-3">
-                  {/* Attempt Info */}
+                  {/* Quiz Name and Attempt Number */}
                   <div>
                     <h3 className="font-semibold text-lg mb-1">
-                      Archive #{archivedAttempts.length - idx}
+                      {attempt.quiz_name || `Quiz ${attempt.quiz}`}
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      Quiz ID: {attempt.quiz}
+                      Attempt #{getQuizAttemptNumber(attempt)}
                     </p>
                   </div>
 

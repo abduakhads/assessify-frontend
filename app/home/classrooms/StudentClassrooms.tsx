@@ -338,7 +338,7 @@ export default function StudentClassrooms() {
             {selectedClassroom.teacher.last_name}
           </p>
           <div className="flex gap-4 text-sm text-muted-foreground">
-            <span>Quiz ID: {selectedQuiz.id}</span>
+            {/* <span>Quiz ID: {selectedQuiz.id}</span> */}
             <span>Questions: {selectedQuiz.question_count}</span>
             <span>
               Attempts: {completedAttempts.length}/

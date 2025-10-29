@@ -40,6 +40,7 @@ export interface StudentQuizAttempt {
   id: number;
   student: number;
   quiz: number;
+  quiz_name: string;
   started_at: string;
   completed_at: string | null;
   score: string | null;

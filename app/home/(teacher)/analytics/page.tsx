@@ -232,10 +232,10 @@ export default function Analytics() {
 
       if (res.ok) {
         const data = await res.json();
-        // Preserve the student object from the current selectedAttempt
+        // Preserve the student object and dates from the current selectedAttempt
         setSelectedAttempt({
-          ...data,
-          student: selectedAttempt.student,
+          ...selectedAttempt,
+          score: data.score || score,
         });
         setToast({
           message: "Score updated successfully",

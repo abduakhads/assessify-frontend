@@ -1430,7 +1430,7 @@ export default function TeacherClassrooms() {
               onCheckedChange={(checked) => setQuizIsActive(checked === true)}
             />
             <Label htmlFor="quiz-active" className="cursor-pointer">
-              Active (students can see and take this quiz)
+              Active (students can take this quiz)
             </Label>
           </div>
 
@@ -1515,7 +1515,7 @@ export default function TeacherClassrooms() {
               onCheckedChange={(checked) => setQuizIsActive(checked === true)}
             />
             <Label htmlFor="edit-quiz-active" className="cursor-pointer">
-              Active (students can see and take this quiz)
+              Active (students can take this quiz)
             </Label>
           </div>
 

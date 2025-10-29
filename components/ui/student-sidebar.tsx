@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
 import { Home, Archive, LogOut, User, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,7 @@ interface StudentSidebarProps {
 
 export function StudentSidebar({ className }: StudentSidebarProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
   const handleLogout = async () => {
@@ -30,18 +31,26 @@ export function StudentSidebar({ className }: StudentSidebarProps) {
     router.push("/logout");
   };
 
+  const handleClassroomsClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setOpen(false);
+    if (pathname === "/home/classrooms") {
+      // If already on classrooms page, do a full page reload
+      window.location.href = "/home/classrooms";
+    } else {
+      router.push("/home/classrooms");
+    }
+  };
+
   const NavigationLinks = () => (
     <>
       <Button
         variant="ghost"
-        className="w-full justify-start gap-2"
-        asChild
-        onClick={() => setOpen(false)}
+        className="w-full justify-start gap-2 cursor-pointer"
+        onClick={handleClassroomsClick}
       >
-        <Link href="/home/classrooms">
-          <Home className="h-4 w-4" />
-          Classrooms
-        </Link>
+        <Home className="h-4 w-4" />
+        Classrooms
       </Button>
 
       <Button
@@ -74,13 +83,14 @@ export function StudentSidebar({ className }: StudentSidebarProps) {
     <>
       {/* Mobile Header with Menu Button */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between p-4 border-b bg-background">
-        <div className="flex items-center px-4 py-2">
+        <div className="flex items-center px-4 py-2 w-[140px] h-[40px]">
           <Image
             src="/logo.png"
             alt="Assessify Logo"
             width={140}
-            height={140}
+            height={40}
             className="object-contain"
+            priority
           />
         </div>
         <Sheet open={open} onOpenChange={setOpen}>
@@ -92,13 +102,14 @@ export function StudentSidebar({ className }: StudentSidebarProps) {
           <SheetContent side="left" className="w-64 p-0">
             <SheetHeader className="p-4 border-b">
               <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-              <div className="flex items-center justify-center py-2">
+              <div className="flex items-center justify-center py-2 w-full h-[60px]">
                 <Image
                   src="/logo.png"
                   alt="Assessify Logo"
-                  width={140}
-                  height={140}
+                  width={120}
+                  height={60}
                   className="object-contain"
+                  priority
                 />
               </div>
             </SheetHeader>
@@ -129,13 +140,14 @@ export function StudentSidebar({ className }: StudentSidebarProps) {
       >
         {/* Logo Section */}
         <div className="p-4 border-b">
-          <div className="flex items-center justify-center py-2">
+          <div className="flex items-center justify-center py-2 w-full h-[60px]">
             <Image
               src="/logo.png"
               alt="Assessify Logo"
-              width={140}
-              height={140}
+              width={120}
+              height={60}
               className="object-contain"
+              priority
             />
           </div>
         </div>

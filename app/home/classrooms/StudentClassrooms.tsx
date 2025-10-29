@@ -322,7 +322,7 @@ export default function StudentClassrooms() {
 
     return (
       <div className="p-8">
-        <Button variant="ghost" onClick={handleBackToQuizzes} className="mb-4">
+        <Button variant="ghost" onClick={handleBackToQuizzes} className="mb-4 cursor-pointer">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Quizzes
         </Button>
@@ -356,12 +356,13 @@ export default function StudentClassrooms() {
                 <Button
                   onClick={() => handleResumeAttempt(incompleteAttempt.id)}
                   variant="default"
+                  className="cursor-pointer"
                 >
                   Resume Attempt
                 </Button>
               )}
               {canStartNewAttempt && (
-                <Button onClick={handleStartAttempt} variant="default">
+                <Button onClick={handleStartAttempt} variant="default" className="cursor-pointer">
                   Start New Attempt
                 </Button>
               )}
@@ -452,7 +453,7 @@ export default function StudentClassrooms() {
         <Button
           variant="ghost"
           onClick={handleBackToClassrooms}
-          className="mb-4"
+          className="mb-4 cursor-pointer"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Classrooms

@@ -217,7 +217,7 @@ export default function QuizAttempt({
           <p className="text-destructive">{error}</p>
           <Button
             onClick={() => router.push("/home/classrooms")}
-            className="mt-4"
+            className="mt-4 cursor-pointer"
           >
             Back to Classrooms
           </Button>

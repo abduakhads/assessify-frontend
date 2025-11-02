@@ -84,7 +84,7 @@ export function StudentSidebar({ className }: StudentSidebarProps) {
       <div className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between p-4 border-b bg-background">
         <div className="flex items-center px-4 py-2 w-[140px] h-[40px]">
           <Image
-            src="/logo.png"
+            src="/logo-white.png"
             alt="Assessify Logo"
             width={140}
             height={40}
@@ -103,7 +103,7 @@ export function StudentSidebar({ className }: StudentSidebarProps) {
               <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
               <div className="flex items-center justify-center py-2 w-full h-[60px]">
                 <Image
-                  src="/logo.png"
+                  src="/logo-white.png"
                   alt="Assessify Logo"
                   width={120}
                   height={60}
@@ -141,7 +141,7 @@ export function StudentSidebar({ className }: StudentSidebarProps) {
         <div className="p-4 border-b">
           <div className="flex items-center justify-center py-2 w-full h-[60px]">
             <Image
-              src="/logo.png"
+              src="/logo-white.png"
               alt="Assessify Logo"
               width={120}
               height={60}

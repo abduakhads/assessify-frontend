@@ -39,8 +39,17 @@ export const isTokenExpired = (token: string): boolean => {
 };
 
 export const isAuthenticated = (): boolean => {
-  const token = getAccessToken();
-  return token !== null && !isTokenExpired(token);
+  const accessToken = getAccessToken();
+  const refreshToken = getRefreshToken();
+  
+  // If we have a refresh token, we can consider the user authenticated
+  // even if the access token is expired (it will be refreshed by axios interceptor)
+  if (refreshToken) {
+    return true;
+  }
+  
+  // Otherwise, check if we have a valid access token
+  return accessToken !== null && !isTokenExpired(accessToken);
 };
 
 export const getTokenExpirationTime = (token: string): number | null => {

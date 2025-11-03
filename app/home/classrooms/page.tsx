@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import StudentClassrooms from "./StudentClassrooms";
 import TeacherClassrooms from "./TeacherClassrooms";
+import api from "@/lib/axios";
 
 export default function ClassroomsPage() {
   const [role, setRole] = useState<string | null>(null);
@@ -10,27 +11,9 @@ export default function ClassroomsPage() {
 
   useEffect(() => {
     async function fetchRole() {
-      const accessToken = localStorage.getItem("accessToken");
-
-      if (!accessToken) {
-        setLoading(false);
-        return;
-      }
-
       try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/auth/users/me/`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-
-        if (res.ok) {
-          const data = await res.json();
-          setRole(data.role);
-        }
+        const res = await api.get("/auth/users/me/");
+        setRole(res.data.role);
       } catch (err) {
         console.error("Error fetching role", err);
       } finally {

@@ -63,6 +63,63 @@ export const getTokenExpirationTime = (token: string): number | null => {
   }
 };
 
+// Refresh the access token using the refresh token
+export const refreshAccessToken = async (): Promise<string | null> => {
+  const refreshToken = getRefreshToken();
+  
+  if (!refreshToken) {
+    return null;
+  }
+
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/token/refresh/`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          refresh: refreshToken,
+        }),
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      setTokens(data.access, refreshToken);
+      return data.access;
+    } else {
+      // Refresh token is invalid, clear tokens and redirect to login
+      clearTokens();
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login';
+      }
+      return null;
+    }
+  } catch (error) {
+    console.error('Error refreshing token:', error);
+    return null;
+  }
+};
+
+// Get a valid access token, refreshing if necessary
+export const getValidAccessToken = async (): Promise<string | null> => {
+  let accessToken = getAccessToken();
+  
+  if (!accessToken) {
+    return null;
+  }
+
+  // Check if token is expired
+  if (isTokenExpired(accessToken)) {
+    // Try to refresh
+    accessToken = await refreshAccessToken();
+  }
+
+  return accessToken;
+};
+
 export const logout = async () => {
   const refreshToken = getRefreshToken();
   

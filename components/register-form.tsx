@@ -41,7 +41,7 @@ export function RegisterForm({
   useEffect(() => {
     const refreshToken = getRefreshToken();
     if (refreshToken) {
-      router.push("/home");
+      router.replace("/home");
     } else {
       setIsCheckingAuth(false);
     }

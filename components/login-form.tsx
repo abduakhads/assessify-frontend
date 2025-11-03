@@ -32,7 +32,7 @@ export function LoginForm({
   useEffect(() => {
     const refreshToken = getRefreshToken();
     if (refreshToken) {
-      router.push("/home");
+      router.replace("/home");
     } else {
       setIsCheckingAuth(false);
     }
@@ -56,7 +56,7 @@ export function LoginForm({
 
       setTokens(accessToken, refreshToken);
 
-      router.push("/home");
+      router.replace("/home");
     } catch (err: any) {
       console.log(err);
       setError(err?.response?.data?.detail || "Login failed");
@@ -128,7 +128,11 @@ export function LoginForm({
               )}
 
               <div className="flex flex-col gap-3">
-                <Button type="submit" className="w-full cursor-pointer" disabled={loading}>
+                <Button
+                  type="submit"
+                  className="w-full cursor-pointer"
+                  disabled={loading}
+                >
                   {loading ? "Logging in..." : "Login"}
                 </Button>
               </div>

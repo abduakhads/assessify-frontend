@@ -12,18 +12,36 @@ export default function HomeLayout({
 }) {
   const router = useRouter();
   const [isChecking, setIsChecking] = useState(true);
+  const [isAuth, setIsAuth] = useState(false);
 
   useEffect(() => {
     // Check authentication on mount and redirect if not authenticated
-    if (!isAuthenticated()) {
-      router.push("/login");
-    } else {
-      setIsChecking(false);
-    }
+    const checkAuth = () => {
+      const authenticated = isAuthenticated();
+      if (!authenticated) {
+        router.push("/login");
+      } else {
+        setIsAuth(true);
+        setIsChecking(false);
+      }
+    };
+
+    checkAuth();
   }, [router]);
 
-  // Show nothing while checking authentication to avoid hydration mismatch
+  // Show loading state while checking authentication
   if (isChecking) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="text-sm text-muted-foreground">Loading...</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render content if not authenticated (will redirect)
+  if (!isAuth) {
     return null;
   }
 

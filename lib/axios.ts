@@ -80,7 +80,7 @@ api.interceptors.response.use(
 
       try {
         const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/'}/token/refresh`,
+          `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/'}/token/refresh/`,
           {
             refresh: refreshToken,
           }

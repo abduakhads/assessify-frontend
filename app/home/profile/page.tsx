@@ -15,7 +15,8 @@ import { Label } from "@/components/ui/label";
 import { Toast } from "@/components/ui/toast";
 import { User, Lock, Mail, Trash2, Eye, EyeOff } from "lucide-react";
 import { User as UserType } from "@/types";
-import { getAccessToken, logout, clearTokens } from "@/utils/auth";
+import { logout, clearTokens } from "@/utils/auth";
+import api from "@/lib/axios";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -59,24 +60,10 @@ export default function ProfilePage() {
 
   const fetchUserData = async () => {
     try {
-      const token = getAccessToken();
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/users/me/`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (res.ok) {
-        const data = await res.json();
-        setUser(data);
-        setFirstName(data.first_name);
-        setLastName(data.last_name);
-      } else {
-        setToast({ message: "Failed to load user data", type: "error" });
-      }
+      const res = await api.get("/auth/users/me/");
+      setUser(res.data);
+      setFirstName(res.data.first_name);
+      setLastName(res.data.last_name);
     } catch (err) {
       console.error("Error fetching user data:", err);
       setToast({ message: "Network error. Please try again.", type: "error" });
@@ -91,41 +78,21 @@ export default function ProfilePage() {
     setToast(null);
 
     try {
-      const token = getAccessToken();
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/users/me/`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            first_name: firstName,
-            last_name: lastName,
-          }),
-        }
-      );
+      await api.patch("/auth/users/me/", {
+        first_name: firstName,
+        last_name: lastName,
+      });
 
-      if (res.ok || res.status === 204) {
-        // Refetch user data to get updated profile
-        await fetchUserData();
-        setToast({ message: "Profile updated successfully!", type: "success" });
-        setIsEditingProfile(false);
-      } else {
-        try {
-          const data = await res.json();
-          setToast({
-            message: data.detail || "Failed to update profile",
-            type: "error",
-          });
-        } catch {
-          setToast({ message: "Failed to update profile", type: "error" });
-        }
-      }
-    } catch (err) {
+      // Refetch user data to get updated profile
+      await fetchUserData();
+      setToast({ message: "Profile updated successfully!", type: "success" });
+      setIsEditingProfile(false);
+    } catch (err: any) {
       console.error("Error updating profile:", err);
-      setToast({ message: "Network error. Please try again.", type: "error" });
+      setToast({
+        message: err?.response?.data?.detail || "Failed to update profile",
+        type: "error",
+      });
     } finally {
       setProfileLoading(false);
     }
@@ -152,56 +119,37 @@ export default function ProfilePage() {
     }
 
     try {
-      const token = getAccessToken();
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/users/set_password/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            current_password: currentPassword,
-            new_password: newPassword,
-          }),
-        }
-      );
+      await api.post("/auth/users/set_password/", {
+        current_password: currentPassword,
+        new_password: newPassword,
+      });
 
-      if (res.ok || res.status === 204) {
-        setToast({
-          message: "Password changed successfully!",
-          type: "success",
-        });
-        setCurrentPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
-      } else {
-        try {
-          const data = await res.json();
-          if (data.current_password) {
-            setToast({
-              message: `Current password: ${data.current_password[0]}`,
-              type: "error",
-            });
-          } else if (data.new_password) {
-            setToast({
-              message: `New password: ${data.new_password[0]}`,
-              type: "error",
-            });
-          } else {
-            setToast({
-              message: data.detail || "Failed to change password",
-              type: "error",
-            });
-          }
-        } catch {
-          setToast({ message: "Failed to change password", type: "error" });
-        }
-      }
-    } catch (err) {
+      setToast({
+        message: "Password changed successfully!",
+        type: "success",
+      });
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err: any) {
       console.error("Error changing password:", err);
-      setToast({ message: "Network error. Please try again.", type: "error" });
+      const data = err?.response?.data;
+      if (data?.current_password) {
+        setToast({
+          message: `Current password: ${data.current_password[0]}`,
+          type: "error",
+        });
+      } else if (data?.new_password) {
+        setToast({
+          message: `New password: ${data.new_password[0]}`,
+          type: "error",
+        });
+      } else {
+        setToast({
+          message: data?.detail || "Failed to change password",
+          type: "error",
+        });
+      }
     } finally {
       setPasswordLoading(false);
     }
@@ -219,57 +167,38 @@ export default function ProfilePage() {
     }
 
     try {
-      const token = getAccessToken();
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/users/set_username/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            current_password: usernamePassword,
-            new_username: newUsername,
-          }),
-        }
-      );
+      await api.post("/auth/users/set_username/", {
+        current_password: usernamePassword,
+        new_username: newUsername,
+      });
 
-      if (res.ok || res.status === 204) {
-        // Refetch user data to get updated username
-        await fetchUserData();
-        setToast({
-          message: "Username changed successfully!",
-          type: "success",
-        });
-        setNewUsername("");
-        setUsernamePassword("");
-      } else {
-        try {
-          const data = await res.json();
-          if (data.current_password) {
-            setToast({
-              message: `Password: ${data.current_password[0]}`,
-              type: "error",
-            });
-          } else if (data.new_username) {
-            setToast({
-              message: `Username: ${data.new_username[0]}`,
-              type: "error",
-            });
-          } else {
-            setToast({
-              message: data.detail || "Failed to change username",
-              type: "error",
-            });
-          }
-        } catch {
-          setToast({ message: "Failed to change username", type: "error" });
-        }
-      }
-    } catch (err) {
+      // Refetch user data to get updated username
+      await fetchUserData();
+      setToast({
+        message: "Username changed successfully!",
+        type: "success",
+      });
+      setNewUsername("");
+      setUsernamePassword("");
+    } catch (err: any) {
       console.error("Error changing username:", err);
-      setToast({ message: "Network error. Please try again.", type: "error" });
+      const data = err?.response?.data;
+      if (data?.current_password) {
+        setToast({
+          message: `Password: ${data.current_password[0]}`,
+          type: "error",
+        });
+      } else if (data?.new_username) {
+        setToast({
+          message: `Username: ${data.new_username[0]}`,
+          type: "error",
+        });
+      } else {
+        setToast({
+          message: data?.detail || "Failed to change username",
+          type: "error",
+        });
+      }
     } finally {
       setUsernameLoading(false);
     }
@@ -295,64 +224,36 @@ export default function ProfilePage() {
     }
 
     try {
-      const token = getAccessToken();
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/users/me/`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            current_password: deletePassword,
-          }),
-        }
-      );
+      await api.delete("/auth/users/me/", {
+        data: {
+          current_password: deletePassword,
+        },
+      });
 
-      if (res.ok || res.status === 204) {
-        clearTokens();
-        router.push("/login");
-      } else {
-        try {
-          const data = await res.json();
-          if (data.current_password) {
-            setToast({
-              message: data.current_password[0],
-              type: "error",
-            });
-          } else if (res.status === 400) {
-            // 400 with empty body likely means incorrect password
-            setToast({
-              message: "Incorrect password. Please try again.",
-              type: "error",
-            });
-          } else {
-            setToast({
-              message:
-                data.detail ||
-                `Failed to delete account (Status: ${res.status})`,
-              type: "error",
-            });
-          }
-        } catch {
-          // If we can't parse JSON and status is 400, assume incorrect password
-          if (res.status === 400) {
-            setToast({
-              message: "Incorrect password. Please try again.",
-              type: "error",
-            });
-          } else {
-            setToast({
-              message: `Failed to delete account (Status: ${res.status})`,
-              type: "error",
-            });
-          }
-        }
-      }
-    } catch (err) {
+      clearTokens();
+      router.push("/login");
+    } catch (err: any) {
       console.error("Error deleting account:", err);
-      setToast({ message: "Network error. Please try again.", type: "error" });
+      const data = err?.response?.data;
+      if (data?.current_password) {
+        setToast({
+          message: data.current_password[0],
+          type: "error",
+        });
+      } else if (err?.response?.status === 400) {
+        // 400 with empty body likely means incorrect password
+        setToast({
+          message: "Incorrect password. Please try again.",
+          type: "error",
+        });
+      } else {
+        setToast({
+          message:
+            data?.detail ||
+            `Failed to delete account (Status: ${err?.response?.status})`,
+          type: "error",
+        });
+      }
     } finally {
       setDeleteLoading(false);
     }

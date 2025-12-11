@@ -17,7 +17,10 @@ import { Dialog } from "@/components/ui/dialog";
 import { Toast } from "@/components/ui/toast";
 import type { Classroom, User, EnrollmentCode } from "@/types";
 
-export default function StudentsPage() {
+export const dynamic = "force-dynamic";
+export const runtime = "edge";
+
+function StudentsPage() {
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -588,3 +591,5 @@ export default function StudentsPage() {
     </div>
   );
 }
+
+export default StudentsPage;

@@ -1,5 +1,5 @@
 <p align="center">
-	<img src="public/logo-white.png" alt="Assessify Banner" width="400"/>
+	<img src="public/logo.svg" alt="Assessify Banner" width="400"/>
 </p>
 
 <h1 align="center">Assessify Frontend</h1>

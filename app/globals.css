@@ -120,3 +120,30 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  /* Safari backdrop-filter fix with proper stacking */
+  .backdrop-blur-sm {
+    -webkit-backdrop-filter: blur(4px) !important;
+    backdrop-filter: blur(4px) !important;
+    isolation: isolate;
+  }
+
+  .backdrop-blur-md {
+    -webkit-backdrop-filter: blur(12px) !important;
+    backdrop-filter: blur(12px) !important;
+    isolation: isolate;
+  }
+
+  .backdrop-blur-lg {
+    -webkit-backdrop-filter: blur(16px) !important;
+    backdrop-filter: blur(16px) !important;
+    isolation: isolate;
+  }
+
+  .backdrop-blur-xl {
+    -webkit-backdrop-filter: blur(24px) !important;
+    backdrop-filter: blur(24px) !important;
+    isolation: isolate;
+  }
+}

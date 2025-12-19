@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Wrapper from "@/components/ui/layouts/Wrapper";
 import { isAuthenticated } from "@/utils/auth";
+import { getCurrentUser, isProfileComplete } from "@/utils/user";
+import { UserProfileModal } from "@/components/UserProfileModal";
+import { User } from "@/types";
 
 export default function HomeLayout({
   children,
@@ -13,21 +16,33 @@ export default function HomeLayout({
   const router = useRouter();
   const [isChecking, setIsChecking] = useState(true);
   const [isAuth, setIsAuth] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
 
   useEffect(() => {
     // Check authentication on mount and redirect if not authenticated
-    const checkAuth = () => {
+    const checkAuth = async () => {
       const authenticated = isAuthenticated();
       if (!authenticated) {
         router.push("/login");
       } else {
         setIsAuth(true);
+
+        // Check if user profile is complete
+        const user = await getCurrentUser();
+        if (user && !isProfileComplete(user)) {
+          setShowProfileModal(true);
+        }
+
         setIsChecking(false);
       }
     };
 
     checkAuth();
   }, [router]);
+
+  const handleProfileComplete = () => {
+    setShowProfileModal(false);
+  };
 
   // Show loading state while checking authentication
   if (isChecking) {
@@ -45,5 +60,13 @@ export default function HomeLayout({
     return null;
   }
 
-  return <Wrapper>{children}</Wrapper>;
+  return (
+    <>
+      <UserProfileModal
+        open={showProfileModal}
+        onComplete={handleProfileComplete}
+      />
+      <Wrapper>{children}</Wrapper>
+    </>
+  );
 }

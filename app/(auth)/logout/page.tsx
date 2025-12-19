@@ -18,11 +18,11 @@ export default function LogoutPage() {
         // The logout function will handle the redirect to /login
       } catch (err) {
         console.error("Logout error:", err);
-        setError("An error occurred during logout. Redirecting to login...");
+        setError("An error occurred during logout. Redirecting...");
 
         // Fallback redirect after error
         setTimeout(() => {
-          router.push("/login");
+          router.push("/");
         }, 2000);
       } finally {
         setIsLoggingOut(false);
@@ -39,7 +39,7 @@ export default function LogoutPage() {
           <CardContent className="flex flex-col items-center justify-center py-8 text-center">
             <div className="text-red-600 text-sm font-medium mb-4">{error}</div>
             <div className="text-xs text-muted-foreground">
-              You will be redirected to the login page shortly...
+              You will be redirected shortly...
             </div>
           </CardContent>
         </Card>

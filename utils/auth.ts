@@ -148,9 +148,9 @@ export const logout = async () => {
   // Clear tokens from localStorage
   clearTokens();
   
-  // Redirect to login page
+  // Redirect to main page
   if (typeof window !== 'undefined') {
-    window.location.href = '/login';
+    window.location.href = '/';
   }
 };
 

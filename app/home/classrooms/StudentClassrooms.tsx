@@ -538,18 +538,23 @@ export default function StudentClassrooms() {
         />
       )}
 
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-3xl font-bold">Classrooms</h1>
-        <Button
-          onClick={() => setShowEnrollDialog(true)}
-          className="cursor-pointer"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Enroll in Classroom
-        </Button>
+      <div className="mb-4">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold">Classrooms</h1>
+            <p className="text-muted-foreground mt-2">
+              Welcome to your classrooms
+            </p>
+          </div>
+          <Button
+            onClick={() => setShowEnrollDialog(true)}
+            className="cursor-pointer w-full md:w-auto"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Enroll in Classroom
+          </Button>
+        </div>
       </div>
-
-      <p className="text-muted-foreground mb-8">Welcome to your classrooms</p>
 
       {classrooms.length === 0 ? (
         <p className="text-muted-foreground">No classrooms found</p>

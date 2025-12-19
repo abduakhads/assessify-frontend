@@ -884,20 +884,22 @@ export default function TeacherClassrooms() {
       {!selectedClassroom ? (
         // Classroom List View
         <>
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h1 className="text-3xl font-bold mb-2">My Classrooms</h1>
-              <p className="text-muted-foreground">
-                Manage your classrooms and assignments
-              </p>
+          <div className="mb-8">
+            <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+              <div>
+                <h1 className="text-3xl font-bold mb-2">My Classrooms</h1>
+                <p className="text-muted-foreground">
+                  Manage your classrooms and assignments
+                </p>
+              </div>
+              <Button
+                onClick={() => setShowCreateDialog(true)}
+                className="cursor-pointer w-full md:w-auto md:mt-0"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Create Classroom
+              </Button>
             </div>
-            <Button
-              onClick={() => setShowCreateDialog(true)}
-              className="cursor-pointer"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Create Classroom
-            </Button>
           </div>
 
           {classrooms.length === 0 ? (
@@ -907,6 +909,7 @@ export default function TeacherClassrooms() {
                 Create your first classroom to get started
               </p>
               <Button
+                variant="outline"
                 onClick={() => setShowCreateDialog(true)}
                 className="cursor-pointer"
               >
@@ -961,7 +964,7 @@ export default function TeacherClassrooms() {
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Classrooms
             </Button>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
               <div>
                 <h1 className="text-3xl font-bold mb-2">
                   {selectedClassroom.name}
@@ -973,7 +976,7 @@ export default function TeacherClassrooms() {
               <Button
                 variant="outline"
                 onClick={() => setShowEditDialog(true)}
-                className="cursor-pointer"
+                className="cursor-pointer w-full md:w-auto"
               >
                 <Edit className="h-4 w-4 mr-2" />
                 Edit Classroom
@@ -983,11 +986,11 @@ export default function TeacherClassrooms() {
 
           {/* Quizzes Section */}
           <div>
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
               <h2 className="text-xl font-semibold">Quizzes</h2>
               <Button
                 onClick={() => setShowCreateQuizDialog(true)}
-                className="cursor-pointer"
+                className="cursor-pointer w-full sm:w-auto"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Create Quiz
@@ -1003,6 +1006,7 @@ export default function TeacherClassrooms() {
                   Create your first quiz to get started
                 </p>
                 <Button
+                  variant="outline"
                   onClick={() => setShowCreateQuizDialog(true)}
                   className="cursor-pointer"
                 >
@@ -1069,7 +1073,7 @@ export default function TeacherClassrooms() {
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Quizzes
             </Button>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
               <div>
                 <h1 className="text-3xl font-bold mb-2">
                   {selectedQuiz.title}
@@ -1081,7 +1085,7 @@ export default function TeacherClassrooms() {
               <Button
                 variant="outline"
                 onClick={() => setShowEditQuizDialog(true)}
-                className="cursor-pointer"
+                className="cursor-pointer w-full md:w-auto"
               >
                 <Edit className="h-4 w-4 mr-2" />
                 Edit Quiz
@@ -1128,11 +1132,11 @@ export default function TeacherClassrooms() {
 
           {/* Questions Section */}
           <div>
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
               <h2 className="text-xl font-semibold">Questions</h2>
               <Button
                 onClick={() => handleOpenQuestionDialog()}
-                className="cursor-pointer"
+                className="cursor-pointer w-full sm:w-auto"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Question
@@ -1148,6 +1152,7 @@ export default function TeacherClassrooms() {
                   Add your first question to get started
                 </p>
                 <Button
+                  variant="outline"
                   onClick={() => handleOpenQuestionDialog()}
                   className="cursor-pointer"
                 >

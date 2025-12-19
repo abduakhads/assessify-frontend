@@ -39,7 +39,7 @@ export default function Wrapper({ children }: { children: React.ReactNode }) {
     <NavigationProvider>
       <div className="flex min-h-screen">
         {role === "teacher" ? <TeacherSidebar /> : <StudentSidebar />}
-        <main className="flex-1 pt-16 lg:pt-0">{children}</main>
+        <main className="flex-1 pt-16 pb-24 lg:pt-0 lg:pb-0">{children}</main>
       </div>
     </NavigationProvider>
   );

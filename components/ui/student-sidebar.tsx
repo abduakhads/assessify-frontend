@@ -8,13 +8,6 @@ import { Home, Archive, LogOut, User, Menu, ArrowLeft } from "lucide-react";
 import { useNavigation } from "@/contexts/NavigationContext";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { logout } from "@/utils/auth";
 
@@ -82,8 +75,8 @@ export function StudentSidebar({ className }: StudentSidebarProps) {
 
   return (
     <>
-      {/* Mobile Header with Menu Button */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between p-4 border-b bg-background">
+      {/* Mobile Header */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between p-4 border-b bg-background/60 backdrop-blur-md">
         <div className="flex items-center min-w-[140px]">
           {backButton?.show ? (
             <Button
@@ -97,53 +90,51 @@ export function StudentSidebar({ className }: StudentSidebarProps) {
             </Button>
           ) : null}
         </div>
-        <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <Menu className="h-5 w-5" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-64 p-0">
-            <SheetHeader className="p-4 border-b">
-              <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-              <div className="flex items-center justify-center py-2 w-full h-[60px]">
-                <Image
-                  src="/logo.svg"
-                  alt="Assessify Logo"
-                  width={120}
-                  height={60}
-                  className="object-contain"
-                  priority
-                />
-              </div>
-            </SheetHeader>
-            <nav className="flex flex-col flex-1 p-4 gap-2 mt-4">
-              <NavigationLinks />
-            </nav>
-            <div className="p-4 absolute bottom-0 left-0 right-0">
-              <Separator className="mb-4" />
-              <Button
-                variant="ghost"
-                className="w-full justify-start gap-2 text-destructive hover:text-destructive hover:bg-destructive/10 cursor-pointer"
-                onClick={handleLogout}
-              >
-                <LogOut className="h-4 w-4" />
-                Logout
-              </Button>
-            </div>
-          </SheetContent>
-        </Sheet>
+        <Button variant="ghost" size="icon" onClick={handleLogout}>
+          <LogOut className="h-5 w-5" />
+        </Button>
       </div>
+
+      {/* Mobile Bottom Navigation Bar */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 pb-safe">
+        <div className="mx-4 mb-4">
+          <div className="bg-background/30 backdrop-blur-md border border-white/10 rounded-full shadow-xl p-3">
+            <div className="flex items-center justify-around gap-1">
+              <button
+                onClick={handleClassroomsClick}
+                className="flex flex-col items-center justify-center p-2 rounded-full hover:bg-white/10 transition-colors min-w-[65px]"
+              >
+                <Home className="h-5 w-5" />
+                <span className="text-xs mt-1">Home</span>
+              </button>
+              <Link
+                href="/home/archived"
+                className="flex flex-col items-center justify-center p-2 rounded-full hover:bg-white/10 transition-colors min-w-[65px]"
+              >
+                <Archive className="h-5 w-5" />
+                <span className="text-xs mt-1">Archived</span>
+              </Link>
+              <Link
+                href="/home/profile"
+                className="flex flex-col items-center justify-center p-2 rounded-full hover:bg-white/10 transition-colors min-w-[65px]"
+              >
+                <User className="h-5 w-5" />
+                <span className="text-xs mt-1">Profile</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </nav>
 
       {/* Desktop Sidebar */}
       <aside
         className={cn(
-          "hidden lg:flex h-screen w-64 flex-col border-r bg-background",
+          "hidden lg:flex w-64 flex-col my-4 ml-4 h-[calc(100vh-2rem)] rounded-2xl border border-white/10 bg-background/80 backdrop-blur-md shadow-xl",
           className
         )}
       >
         {/* Logo Section */}
-        <div className="p-4 border-b">
+        <div className="p-4 border-b border-white/10">
           <div className="flex items-center justify-center py-2 w-full h-[60px]">
             <Image
               src="/logo.svg"
@@ -166,7 +157,7 @@ export function StudentSidebar({ className }: StudentSidebarProps) {
           <Separator className="mb-4" />
           <Button
             variant="ghost"
-            className="w-full justify-start gap-2 text-destructive hover:text-destructive hover:bg-destructive/10 cursor-pointer"
+            className="w-full justify-start gap-2 hover:bg-white/10 cursor-pointer"
             onClick={handleLogout}
           >
             <LogOut className="h-4 w-4" />

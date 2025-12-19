@@ -85,6 +85,9 @@ export default function StudentClassrooms() {
     if (prevUrlRef.current === currentUrl) return;
     prevUrlRef.current = currentUrl;
 
+    // Clear toast when navigating between views
+    setToast(null);
+
     if (classroomId && quizId && classrooms.length > 0) {
       // Load quiz view
       const classroom = classrooms.find((c) => c.id === parseInt(classroomId));

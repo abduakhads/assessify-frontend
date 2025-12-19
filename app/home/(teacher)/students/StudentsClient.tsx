@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Dialog } from "@/components/ui/dialog";
 import { Toast } from "@/components/ui/toast";
+import { useNavigation } from "@/contexts/NavigationContext";
 import type { Classroom, User, EnrollmentCode } from "@/types";
 
 export default function StudentsClient() {
@@ -34,10 +35,26 @@ export default function StudentsClient() {
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
   const [studentToRemove, setStudentToRemove] = useState<User | null>(null);
   const [removeLoading, setRemoveLoading] = useState(false);
+  const { setBackButton } = useNavigation();
 
   useEffect(() => {
     fetchClassrooms();
   }, []);
+
+  // Set back button based on current view
+  useEffect(() => {
+    if (selectedClassroom) {
+      setBackButton({
+        show: true,
+        label: "Back",
+        onClick: handleBack,
+      });
+    } else {
+      setBackButton(null);
+    }
+
+    return () => setBackButton(null);
+  }, [selectedClassroom]);
 
   const fetchClassrooms = async () => {
     const accessToken = localStorage.getItem("accessToken");
@@ -381,7 +398,7 @@ export default function StudentsClient() {
             <Button
               variant="ghost"
               onClick={handleBack}
-              className="mb-4 cursor-pointer"
+              className="mb-4 cursor-pointer hidden lg:flex"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Classrooms

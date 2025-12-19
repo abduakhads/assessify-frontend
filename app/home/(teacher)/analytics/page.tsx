@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Toast } from "@/components/ui/toast";
+import { useNavigation } from "@/contexts/NavigationContext";
 import type {
   Classroom,
   Quiz,
@@ -38,10 +39,38 @@ export default function Analytics() {
     message: string;
     type: "success" | "error";
   } | null>(null);
+  const { setBackButton } = useNavigation();
 
   useEffect(() => {
     fetchClassrooms();
   }, []);
+
+  // Set back button based on current view
+  useEffect(() => {
+    if (selectedAttempt) {
+      setBackButton({
+        show: true,
+        label: "Back",
+        onClick: handleBackToAttempts,
+      });
+    } else if (selectedQuiz) {
+      setBackButton({
+        show: true,
+        label: "Back",
+        onClick: handleBackToQuizzes,
+      });
+    } else if (selectedClassroom) {
+      setBackButton({
+        show: true,
+        label: "Back",
+        onClick: handleBackToClassrooms,
+      });
+    } else {
+      setBackButton(null);
+    }
+
+    return () => setBackButton(null);
+  }, [selectedClassroom, selectedQuiz, selectedAttempt]);
 
   const fetchClassrooms = async () => {
     const accessToken = localStorage.getItem("accessToken");
@@ -330,7 +359,7 @@ export default function Analytics() {
             <Button
               variant="ghost"
               onClick={handleBackToClassrooms}
-              className="mb-4 cursor-pointer"
+              className="mb-4 cursor-pointer hidden lg:flex"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Classrooms
@@ -394,7 +423,7 @@ export default function Analytics() {
             <Button
               variant="ghost"
               onClick={handleBackToQuizzes}
-              className="mb-4 cursor-pointer"
+              className="mb-4 cursor-pointer hidden lg:flex"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Quizzes
@@ -468,7 +497,7 @@ export default function Analytics() {
             <Button
               variant="ghost"
               onClick={handleBackToAttempts}
-              className="mb-4 cursor-pointer"
+              className="mb-4 cursor-pointer hidden lg:flex"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Attempts

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -33,6 +34,9 @@ export default function StudentClassrooms() {
     type: "success" | "error";
   } | null>(null);
   const { setBackButton } = useNavigation();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const prevUrlRef = useRef<string>("");
 
   useEffect(() => {
     async function fetchClassrooms() {
@@ -70,6 +74,54 @@ export default function StudentClassrooms() {
 
     fetchClassrooms();
   }, []);
+
+  // Sync state with URL params
+  useEffect(() => {
+    const classroomId = searchParams.get("classroom");
+    const quizId = searchParams.get("quiz");
+    const currentUrl = `${classroomId || ""}-${quizId || ""}`;
+
+    // Only update if URL actually changed
+    if (prevUrlRef.current === currentUrl) return;
+    prevUrlRef.current = currentUrl;
+
+    if (classroomId && quizId && classrooms.length > 0) {
+      // Load quiz view
+      const classroom = classrooms.find((c) => c.id === parseInt(classroomId));
+      if (classroom && classroom.id !== selectedClassroom?.id) {
+        setSelectedClassroom(classroom);
+        fetchQuizzes(parseInt(classroomId));
+      }
+
+      if (quizzes.length > 0) {
+        const quiz = quizzes.find((q) => q.id === parseInt(quizId));
+        if (quiz && quiz.id !== selectedQuiz?.id) {
+          setSelectedQuiz(quiz);
+          fetchAttempts(parseInt(quizId));
+        }
+      }
+    } else if (classroomId && classrooms.length > 0) {
+      // Load classroom view - clear quiz if currently viewing one
+      const classroom = classrooms.find((c) => c.id === parseInt(classroomId));
+      if (classroom) {
+        if (classroom.id !== selectedClassroom?.id) {
+          setSelectedClassroom(classroom);
+          fetchQuizzes(parseInt(classroomId));
+        }
+        // Always clear quiz state when quiz param is removed
+        if (selectedQuiz !== null) {
+          setSelectedQuiz(null);
+          setAttempts([]);
+        }
+      }
+    } else if (!classroomId && selectedClassroom !== null) {
+      // Main list view
+      setSelectedClassroom(null);
+      setSelectedQuiz(null);
+      setQuizzes([]);
+      setAttempts([]);
+    }
+  }, [searchParams]);
 
   // Set back button based on current view
   useEffect(() => {
@@ -230,28 +282,21 @@ export default function StudentClassrooms() {
   };
 
   const handleClassroomClick = (classroom: Classroom) => {
-    setSelectedClassroom(classroom);
-    fetchQuizzes(classroom.id);
+    router.push(`/home/classrooms?classroom=${classroom.id}`);
   };
 
   const handleQuizClick = (quiz: Quiz) => {
-    setSelectedQuiz(quiz);
-    fetchAttempts(quiz.id);
+    const classroomId = searchParams.get("classroom");
+    router.push(`/home/classrooms?classroom=${classroomId}&quiz=${quiz.id}`);
   };
 
   const handleBackToClassrooms = () => {
-    setSelectedClassroom(null);
-    setSelectedQuiz(null);
-    setQuizzes([]);
-    setAttempts([]);
-    setError(null);
+    router.push("/home/classrooms");
   };
 
   const handleBackToQuizzes = () => {
-    setSelectedQuiz(null);
-    setAttempts([]);
-    setActiveAttemptId(null);
-    setError(null);
+    const classroomId = searchParams.get("classroom");
+    router.push(`/home/classrooms?classroom=${classroomId}`);
   };
 
   const handleStartAttempt = async () => {

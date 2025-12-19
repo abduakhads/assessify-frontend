@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Plus, Users, ArrowLeft, Edit, Trash2, Clock, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -60,6 +61,9 @@ export default function TeacherClassrooms() {
     type: "success" | "error";
   } | null>(null);
   const { setBackButton } = useNavigation();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const prevUrlRef = useRef<string>("");
 
   useEffect(() => {
     async function fetchClassrooms() {
@@ -97,6 +101,56 @@ export default function TeacherClassrooms() {
 
     fetchClassrooms();
   }, []);
+
+  // Sync state with URL params
+  useEffect(() => {
+    const classroomId = searchParams.get("classroom");
+    const quizId = searchParams.get("quiz");
+    const currentUrl = `${classroomId || ""}-${quizId || ""}`;
+
+    // Only update if URL actually changed
+    if (prevUrlRef.current === currentUrl) return;
+    prevUrlRef.current = currentUrl;
+
+    if (classroomId && quizId && classrooms.length > 0) {
+      // Load quiz view
+      const classroom = classrooms.find((c) => c.id === parseInt(classroomId));
+      if (classroom && classroom.id !== selectedClassroom?.id) {
+        setSelectedClassroom(classroom);
+        setEditClassroomName(classroom.name);
+        fetchQuizzes(parseInt(classroomId));
+      }
+
+      if (quizzes.length > 0) {
+        const quiz = quizzes.find((q) => q.id === parseInt(quizId));
+        if (quiz && quiz.id !== selectedQuiz?.id) {
+          setSelectedQuiz(quiz);
+          fetchQuestions(parseInt(quizId));
+        }
+      }
+    } else if (classroomId && classrooms.length > 0) {
+      // Load classroom view - clear quiz if currently viewing one
+      const classroom = classrooms.find((c) => c.id === parseInt(classroomId));
+      if (classroom) {
+        if (classroom.id !== selectedClassroom?.id) {
+          setSelectedClassroom(classroom);
+          setEditClassroomName(classroom.name);
+          fetchQuizzes(parseInt(classroomId));
+        }
+        // Always clear quiz state when quiz param is removed
+        if (selectedQuiz !== null) {
+          setSelectedQuiz(null);
+          setQuestions([]);
+        }
+      }
+    } else if (!classroomId && selectedClassroom !== null) {
+      // Main list view
+      setSelectedClassroom(null);
+      setSelectedQuiz(null);
+      setQuizzes([]);
+      setQuestions([]);
+    }
+  }, [searchParams]);
 
   // Set back button based on current view
   useEffect(() => {
@@ -214,14 +268,12 @@ export default function TeacherClassrooms() {
   };
 
   const handleClassroomClick = (classroom: Classroom) => {
-    setSelectedClassroom(classroom);
     setEditClassroomName(classroom.name);
-    fetchQuizzes(classroom.id);
+    router.push(`/home/classrooms?classroom=${classroom.id}`);
   };
 
   const handleBack = () => {
-    setSelectedClassroom(null);
-    setQuizzes([]);
+    router.push("/home/classrooms");
   };
 
   const fetchQuizzes = async (classroomId: number) => {
@@ -438,17 +490,17 @@ export default function TeacherClassrooms() {
   };
 
   const handleQuizClick = (quiz: Quiz) => {
-    setSelectedQuiz(quiz);
+    const classroomId = searchParams.get("classroom");
     setQuizTitle(quiz.title);
     setQuizDeadline(quiz.deadline.slice(0, 16));
     setQuizIsActive(quiz.is_active);
     setQuizAllowedAttempts(quiz.allowed_attempts);
-    fetchQuestions(quiz.id);
+    router.push(`/home/classrooms?classroom=${classroomId}&quiz=${quiz.id}`);
   };
 
   const handleBackToQuizzes = () => {
-    setSelectedQuiz(null);
-    setQuestions([]);
+    const classroomId = searchParams.get("classroom");
+    router.push(`/home/classrooms?classroom=${classroomId}`);
   };
 
   const fetchQuestions = async (quizId: number) => {

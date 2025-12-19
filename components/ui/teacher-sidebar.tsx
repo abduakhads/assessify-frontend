@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Home,
   Archive,
@@ -33,7 +33,14 @@ export function TeacherSidebar({ className }: TeacherSidebarProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const { backButton } = useNavigation();
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, systemTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const currentTheme = theme === "system" ? systemTheme : theme;
 
   const handleLogout = async () => {
     await logout();
@@ -112,9 +119,11 @@ export function TeacherSidebar({ className }: TeacherSidebarProps) {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            onClick={() => setTheme(currentTheme === "dark" ? "light" : "dark")}
           >
-            {theme === "dark" ? (
+            {!mounted ? (
+              <Sun className="h-5 w-5" />
+            ) : currentTheme === "dark" ? (
               <Sun className="h-5 w-5" />
             ) : (
               <Moon className="h-5 w-5" />
@@ -175,7 +184,13 @@ export function TeacherSidebar({ className }: TeacherSidebarProps) {
         <div className="p-4 border-b border-white/10">
           <div className="flex items-center justify-center py-2 w-full h-[60px]">
             <Image
-              src={theme === "dark" ? "/logo-white.png" : "/logo-black.png"}
+              src={
+                !mounted
+                  ? "/logo-white.png"
+                  : currentTheme === "dark"
+                  ? "/logo-white.png"
+                  : "/logo-black.png"
+              }
               alt="Assessify Logo"
               width={120}
               height={60}
@@ -196,14 +211,24 @@ export function TeacherSidebar({ className }: TeacherSidebarProps) {
           <Button
             variant="ghost"
             className="w-full justify-start gap-2 hover:bg-white/10 cursor-pointer mb-2"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            onClick={() => setTheme(currentTheme === "dark" ? "light" : "dark")}
           >
-            {theme === "dark" ? (
-              <Sun className="h-4 w-4" />
+            {!mounted ? (
+              <>
+                <Sun className="h-4 w-4" />
+                Light Mode
+              </>
+            ) : currentTheme === "dark" ? (
+              <>
+                <Sun className="h-4 w-4" />
+                Light Mode
+              </>
             ) : (
-              <Moon className="h-4 w-4" />
+              <>
+                <Moon className="h-4 w-4" />
+                Dark Mode
+              </>
             )}
-            {theme === "dark" ? "Light Mode" : "Dark Mode"}
           </Button>
           <Button
             variant="ghost"

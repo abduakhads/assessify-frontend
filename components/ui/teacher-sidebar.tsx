@@ -175,7 +175,7 @@ export function TeacherSidebar({ className }: TeacherSidebarProps) {
         <div className="p-4 border-b border-white/10">
           <div className="flex items-center justify-center py-2 w-full h-[60px]">
             <Image
-              src="/logo.svg"
+              src={theme === "dark" ? "/logo-white.png" : "/logo-black.png"}
               alt="Assessify Logo"
               width={120}
               height={60}

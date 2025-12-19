@@ -40,7 +40,7 @@ export function Dialog({
       />
 
       {/* Dialog */}
-      <div className="relative z-50 w-full max-w-lg mx-4 bg-background rounded-lg shadow-[0_0_30px_rgba(255,255,255,0.08)]">
+      <div className="relative z-50 w-full max-w-lg mx-4 bg-background rounded-lg shadow-[0_0_30px_rgba(255,255,255,0.01)]">
         <div className="flex items-center justify-between p-6 border-b">
           <h2 className="text-lg font-semibold">{title}</h2>
           {showClose && (

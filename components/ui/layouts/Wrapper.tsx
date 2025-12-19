@@ -35,9 +35,9 @@ export default function Wrapper({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex min-h-screen">
       {role === "teacher" ? <TeacherSidebar /> : <StudentSidebar />}
-      <main className="flex-1 overflow-auto pt-16 lg:pt-0">{children}</main>
+      <main className="flex-1 pt-16 lg:pt-0">{children}</main>
     </div>
   );
 }

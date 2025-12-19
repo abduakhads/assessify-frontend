@@ -129,7 +129,7 @@ export function StudentSidebar({ className }: StudentSidebarProps) {
       {/* Desktop Sidebar */}
       <aside
         className={cn(
-          "hidden lg:flex w-64 flex-col my-4 ml-4 h-[calc(100vh-2rem)] rounded-2xl border border-white/10 bg-background/80 backdrop-blur-md shadow-xl",
+          "hidden lg:flex fixed top-0 left-0 w-64 flex-col my-4 ml-4 h-[calc(100vh-2rem)] rounded-2xl border border-white/10 bg-background/80 backdrop-blur-md shadow-xl",
           className
         )}
       >

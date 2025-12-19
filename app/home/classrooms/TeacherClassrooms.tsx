@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Toast } from "@/components/ui/toast";
+import { useNavigation } from "@/contexts/NavigationContext";
 import type { Classroom, Quiz, Question, Answer } from "@/types";
 
 export default function TeacherClassrooms() {
@@ -58,6 +59,7 @@ export default function TeacherClassrooms() {
     message: string;
     type: "success" | "error";
   } | null>(null);
+  const { setBackButton } = useNavigation();
 
   useEffect(() => {
     async function fetchClassrooms() {
@@ -95,6 +97,28 @@ export default function TeacherClassrooms() {
 
     fetchClassrooms();
   }, []);
+
+  // Set back button based on current view
+  useEffect(() => {
+    if (selectedQuiz) {
+      setBackButton({
+        show: true,
+        label: "Back",
+        onClick: handleBackToQuizzes,
+      });
+    } else if (selectedClassroom) {
+      setBackButton({
+        show: true,
+        label: "Back",
+        onClick: handleBack,
+      });
+    } else {
+      setBackButton(null);
+    }
+
+    // Cleanup
+    return () => setBackButton(null);
+  }, [selectedClassroom, selectedQuiz]);
 
   const fetchClassrooms = async () => {
     const accessToken = localStorage.getItem("accessToken");
@@ -959,7 +983,7 @@ export default function TeacherClassrooms() {
             <Button
               variant="ghost"
               onClick={handleBack}
-              className="mb-4 cursor-pointer"
+              className="mb-4 cursor-pointer hidden lg:flex"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Classrooms
@@ -1068,7 +1092,7 @@ export default function TeacherClassrooms() {
             <Button
               variant="ghost"
               onClick={handleBackToQuizzes}
-              className="mb-4 cursor-pointer"
+              className="mb-4 cursor-pointer hidden lg:flex"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Quizzes

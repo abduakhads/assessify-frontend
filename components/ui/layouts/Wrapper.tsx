@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { StudentSidebar } from "../student-sidebar";
 import { TeacherSidebar } from "../teacher-sidebar";
+import { NavigationProvider } from "@/contexts/NavigationContext";
 import api from "@/lib/axios";
 
 export default function Wrapper({ children }: { children: React.ReactNode }) {
@@ -35,9 +36,11 @@ export default function Wrapper({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="flex min-h-screen">
-      {role === "teacher" ? <TeacherSidebar /> : <StudentSidebar />}
-      <main className="flex-1 pt-16 lg:pt-0">{children}</main>
-    </div>
+    <NavigationProvider>
+      <div className="flex min-h-screen">
+        {role === "teacher" ? <TeacherSidebar /> : <StudentSidebar />}
+        <main className="flex-1 pt-16 lg:pt-0">{children}</main>
+      </div>
+    </NavigationProvider>
   );
 }

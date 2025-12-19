@@ -4,7 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
-import { Home, Archive, LogOut, User, Menu } from "lucide-react";
+import { Home, Archive, LogOut, User, Menu, ArrowLeft } from "lucide-react";
+import { useNavigation } from "@/contexts/NavigationContext";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -25,6 +26,7 @@ export function StudentSidebar({ className }: StudentSidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const { backButton } = useNavigation();
 
   const handleLogout = async () => {
     await logout();
@@ -82,15 +84,18 @@ export function StudentSidebar({ className }: StudentSidebarProps) {
     <>
       {/* Mobile Header with Menu Button */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between p-4 border-b bg-background">
-        <div className="flex items-center px-4 py-2 w-[140px] h-[40px]">
-          <Image
-            src="/logo.svg"
-            alt="Assessify Logo"
-            width={140}
-            height={40}
-            className="object-contain"
-            priority
-          />
+        <div className="flex items-center min-w-[140px]">
+          {backButton?.show ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={backButton.onClick}
+              className="cursor-pointer"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              {backButton.label}
+            </Button>
+          ) : null}
         </div>
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>

@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Toast } from "@/components/ui/toast";
 import QuizAttempt from "@/components/QuizAttempt";
+import { useNavigation } from "@/contexts/NavigationContext";
 import type { Classroom, Quiz, StudentQuizAttempt } from "@/types";
 
 export default function StudentClassrooms() {
@@ -31,6 +32,7 @@ export default function StudentClassrooms() {
     message: string;
     type: "success" | "error";
   } | null>(null);
+  const { setBackButton } = useNavigation();
 
   useEffect(() => {
     async function fetchClassrooms() {
@@ -68,6 +70,28 @@ export default function StudentClassrooms() {
 
     fetchClassrooms();
   }, []);
+
+  // Set back button based on current view
+  useEffect(() => {
+    if (selectedQuiz && selectedClassroom) {
+      setBackButton({
+        show: true,
+        label: "Back",
+        onClick: handleBackToQuizzes,
+      });
+    } else if (selectedClassroom) {
+      setBackButton({
+        show: true,
+        label: "Back",
+        onClick: handleBackToClassrooms,
+      });
+    } else {
+      setBackButton(null);
+    }
+
+    // Cleanup
+    return () => setBackButton(null);
+  }, [selectedClassroom, selectedQuiz]);
 
   const handleEnroll = async () => {
     if (!enrollCode.trim()) {
@@ -325,7 +349,7 @@ export default function StudentClassrooms() {
         <Button
           variant="ghost"
           onClick={handleBackToQuizzes}
-          className="mb-4 cursor-pointer"
+          className="mb-4 cursor-pointer hidden lg:flex"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Quizzes
@@ -461,7 +485,7 @@ export default function StudentClassrooms() {
         <Button
           variant="ghost"
           onClick={handleBackToClassrooms}
-          className="mb-4 cursor-pointer"
+          className="mb-4 cursor-pointer hidden lg:flex"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Classrooms

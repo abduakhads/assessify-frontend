@@ -14,7 +14,9 @@ import {
   BarChart3,
   Plus,
   Menu,
+  ArrowLeft,
 } from "lucide-react";
+import { useNavigation } from "@/contexts/NavigationContext";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -34,6 +36,7 @@ interface TeacherSidebarProps {
 export function TeacherSidebar({ className }: TeacherSidebarProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const { backButton } = useNavigation();
 
   const handleLogout = async () => {
     await logout();
@@ -95,15 +98,18 @@ export function TeacherSidebar({ className }: TeacherSidebarProps) {
     <>
       {/* Mobile Header with Menu Button */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between p-4 border-b bg-background">
-        <div className="flex items-center px-4 py-2 w-[140px] h-[40px]">
-          <Image
-            src="/logo.svg"
-            alt="Assessify Logo"
-            width={140}
-            height={40}
-            className="object-contain"
-            priority
-          />
+        <div className="flex items-center min-w-[140px]">
+          {backButton?.show ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={backButton.onClick}
+              className="cursor-pointer"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              {backButton.label}
+            </Button>
+          ) : null}
         </div>
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>

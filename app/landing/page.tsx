@@ -763,13 +763,13 @@ export default function LandingPage() {
             }
           }
           .animate-scroll-1 {
-            animation: scroll 30s linear infinite;
+            animation: scroll 20s linear infinite;
           }
           .animate-scroll-2 {
-            animation: scroll-reverse 30s linear infinite;
+            animation: scroll-reverse 20s linear infinite;
           }
           .animate-scroll-3 {
-            animation: scroll 30s linear infinite;
+            animation: scroll 20s linear infinite;
           }
         `}</style>
       </section>

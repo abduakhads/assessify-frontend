@@ -4,7 +4,17 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
-import { Home, Archive, LogOut, User, Menu, ArrowLeft } from "lucide-react";
+import {
+  Home,
+  Archive,
+  LogOut,
+  User,
+  Menu,
+  ArrowLeft,
+  Moon,
+  Sun,
+} from "lucide-react";
+import { useTheme } from "next-themes";
 import { useNavigation } from "@/contexts/NavigationContext";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -20,6 +30,7 @@ export function StudentSidebar({ className }: StudentSidebarProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const { backButton } = useNavigation();
+  const { theme, setTheme } = useTheme();
 
   const handleLogout = async () => {
     await logout();
@@ -90,9 +101,22 @@ export function StudentSidebar({ className }: StudentSidebarProps) {
             </Button>
           ) : null}
         </div>
-        <Button variant="ghost" size="icon" onClick={handleLogout}>
-          <LogOut className="h-5 w-5" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          >
+            {theme === "dark" ? (
+              <Sun className="h-5 w-5" />
+            ) : (
+              <Moon className="h-5 w-5" />
+            )}
+          </Button>
+          <Button variant="ghost" size="icon" onClick={handleLogout}>
+            <LogOut className="h-5 w-5" />
+          </Button>
+        </div>
       </div>
 
       {/* Mobile Bottom Navigation Bar */}
@@ -152,9 +176,21 @@ export function StudentSidebar({ className }: StudentSidebarProps) {
           <NavigationLinks />
         </nav>
 
-        {/* Logout Section */}
+        {/* Theme & Logout Section */}
         <div className="p-4">
           <Separator className="mb-4" />
+          <Button
+            variant="ghost"
+            className="w-full justify-start gap-2 hover:bg-white/10 cursor-pointer mb-2"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          >
+            {theme === "dark" ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
+            {theme === "dark" ? "Light Mode" : "Dark Mode"}
+          </Button>
           <Button
             variant="ghost"
             className="w-full justify-start gap-2 hover:bg-white/10 cursor-pointer"

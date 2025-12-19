@@ -50,7 +50,7 @@ export default function TeacherClassrooms() {
   const [questionText, setQuestionText] = useState("");
   const [hasMultipleAnswers, setHasMultipleAnswers] = useState(false);
   const [isWritten, setIsWritten] = useState(false);
-  const [timeLimit, setTimeLimit] = useState(0);
+  const [timeLimit, setTimeLimit] = useState("");
   const [answers, setAnswers] = useState<
     Array<{ text: string; is_correct: boolean; id?: number }>
   >([]);
@@ -654,7 +654,9 @@ export default function TeacherClassrooms() {
       setQuestionText(question.text);
       setHasMultipleAnswers(question.has_multiple_answers);
       setIsWritten(question.is_written);
-      setTimeLimit(question.time_limit);
+      setTimeLimit(
+        question.time_limit > 0 ? question.time_limit.toString() : ""
+      );
       setAnswers(
         question.answers.map((a) => ({
           text: a.text,
@@ -668,7 +670,7 @@ export default function TeacherClassrooms() {
       setQuestionText("");
       setHasMultipleAnswers(false);
       setIsWritten(false);
-      setTimeLimit(0);
+      setTimeLimit("");
       setAnswers([{ text: "", is_correct: false }]);
     }
     setShowQuestionDialog(true);
@@ -680,7 +682,7 @@ export default function TeacherClassrooms() {
     setQuestionText("");
     setHasMultipleAnswers(false);
     setIsWritten(false);
-    setTimeLimit(0);
+    setTimeLimit("");
     setAnswers([]);
   };
 
@@ -754,7 +756,7 @@ export default function TeacherClassrooms() {
         text: questionText,
         has_multiple_answers: hasMultipleAnswers,
         is_written: isWritten,
-        time_limit: timeLimit,
+        time_limit: timeLimit === "" ? 0 : parseInt(timeLimit),
       };
 
       let questionId: number;
@@ -773,7 +775,7 @@ export default function TeacherClassrooms() {
               text: questionText,
               has_multiple_answers: hasMultipleAnswers,
               is_written: isWritten,
-              time_limit: timeLimit,
+              time_limit: timeLimit === "" ? 0 : parseInt(timeLimit),
             }),
           }
         );
@@ -1735,14 +1737,15 @@ export default function TeacherClassrooms() {
 
             <div className="space-y-2">
               <Label htmlFor="time-limit">
-                Time Limit (seconds, 0 for no limit)
+                Time Limit (in seconds, leave blank or 0 for no time limit)
               </Label>
               <Input
                 id="time-limit"
                 type="number"
                 min="0"
                 value={timeLimit}
-                onChange={(e) => setTimeLimit(parseInt(e.target.value) || 0)}
+                onChange={(e) => setTimeLimit(e.target.value)}
+                placeholder="No limit"
               />
             </div>
           </div>

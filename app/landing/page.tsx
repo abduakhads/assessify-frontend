@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   ChevronDown,
   ChevronUp,
@@ -20,6 +21,9 @@ import {
   Twitter,
   ArrowRight,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import axios from "axios";
+import { setTokens, clearTokens } from "@/utils/auth";
 
 const features = [
   {
@@ -123,9 +127,14 @@ const faqs = [
 ];
 
 export default function LandingPage() {
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [selectedDemoRole, setSelectedDemoRole] = useState<
+    "student" | "teacher" | null
+  >(null);
+  const [isDemoLoading, setIsDemoLoading] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -135,6 +144,43 @@ export default function LandingPage() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleDemoLogin = async (role: "student" | "teacher") => {
+    setSelectedDemoRole(role);
+    setIsDemoLoading(true);
+
+    try {
+      // Clear any existing tokens without redirect
+      clearTokens();
+
+      // Login with demo credentials
+      const username =
+        role === "teacher"
+          ? process.env.NEXT_PUBLIC_TEACHER_DEMO_USERNAME || "teacher"
+          : process.env.NEXT_PUBLIC_STUDENT_DEMO_USERNAME || "student";
+
+      const password = process.env.NEXT_PUBLIC_DEMO_PASSWORD || "Pass_1212";
+
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/token/`,
+        {
+          username,
+          password,
+        }
+      );
+
+      const { access: accessToken, refresh: refreshToken } = response.data;
+      setTokens(accessToken, refreshToken);
+
+      // Redirect to home
+      router.push("/home");
+    } catch (error) {
+      console.error("Demo login error:", error);
+      alert("Failed to login with demo account. Please try again.");
+      setIsDemoLoading(false);
+      setSelectedDemoRole(null);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#000000] text-white overflow-x-hidden">
@@ -166,12 +212,14 @@ export default function LandingPage() {
                   isScrolled ? "ml-4" : ""
                 }`}
               >
-                <Image
-                  src="/logo-white.png"
-                  alt="Assessify"
-                  width={120}
-                  height={32}
-                />
+                <a href={process.env.NEXT_PUBLIC_URL}>
+                  <Image
+                    src="/logo-white.png"
+                    alt="Assessify"
+                    width={120}
+                    height={32}
+                  />
+                </a>
               </div>
 
               <div className="flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
@@ -180,6 +228,12 @@ export default function LandingPage() {
                   className="text-gray-300 hover:text-white transition"
                 >
                   Features
+                </a>
+                <a
+                  href="#demo"
+                  className="text-gray-300 hover:text-white transition"
+                >
+                  Demo
                 </a>
                 <a
                   href="#testimonials"
@@ -216,13 +270,15 @@ export default function LandingPage() {
           <div className="md:hidden w-full bg-[#1a1a1a]/10 backdrop-blur-md border border-white/10 rounded-full px-4 py-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center ml-[10px]">
-                <Image
-                  src="/logo-white.png"
-                  alt="Assessify"
-                  width={120}
-                  height={22}
-                  className="flex-shrink-0 object-contain "
-                />
+                <a href={process.env.NEXT_PUBLIC_URL}>
+                  <Image
+                    src="/logo-white.png"
+                    alt="Assessify"
+                    width={120}
+                    height={22}
+                    className="flex-shrink-0 object-contain "
+                  />
+                </a>
               </div>
 
               <button
@@ -244,6 +300,13 @@ export default function LandingPage() {
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Features
+                </a>
+                <a
+                  href="#demo"
+                  className="text-gray-300 hover:text-white hover:bg-white/5 transition px-4 py-3 rounded-xl"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Demo
                 </a>
                 <a
                   href="#testimonials"
@@ -323,20 +386,20 @@ export default function LandingPage() {
               <path d="M30.5625 27.3357C29.9525 30.7343 29.3425 34.133 28.704 37.5284C29.1225 37.4018 29.5411 37.2751 29.9882 37.1516C28.6034 35.0617 27.2504 32.9465 25.8655 30.8565C25.6406 30.5425 25.1523 30.517 24.8669 30.7451C24.5497 30.9987 24.5305 31.4299 24.7555 31.7439C26.1403 33.8338 27.4933 35.9491 28.8781 38.039C29.2489 38.6003 30.0417 38.2265 30.1624 37.6621C30.7724 34.2635 31.3824 30.8648 32.0209 27.4694C32.0908 27.1016 31.758 26.7178 31.3871 26.6765C30.9559 26.6573 30.6324 26.9679 30.5625 27.3357Z"></path>
             </svg>
 
-            {/* Get Started Button */}
-            <Link href="/register">
+            {/* Try Demo Button */}
+            <a href="#demo">
               <div className="group cursor-pointer border border-white/10 bg-white/5 gap-2 h-[60px] flex items-center p-[10px] rounded-full hover:border-emerald-600/30 transition-all">
                 <div className="border border-white/10 bg-emerald-600 h-[40px] rounded-full flex items-center justify-center text-white">
                   <p className="font-medium tracking-tight mr-3 ml-3 flex items-center gap-2 justify-center text-base">
                     <Globe className="w-[18px] h-[18px]" />
-                    Get started
+                    Try Demo Now
                   </p>
                 </div>
                 <div className="text-gray-400 group-hover:ml-4 ease-in-out transition-all size-[24px] flex items-center justify-center rounded-full border-2 border-white/10">
                   <ArrowRight className="w-[14px] h-[14px] group-hover:rotate-180 ease-in-out transition-all" />
                 </div>
               </div>
-            </Link>
+            </a>
           </div>
 
           <p className="text-gray-500 text-sm mb-4">
@@ -455,10 +518,107 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Try Demo Section */}
+      <section id="demo" className="pt-40 pb-20 px-4 bg-[#0a0a0a]">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <span className="text-emerald-500 text-sm font-medium tracking-wider uppercase">
+              Try it now
+            </span>
+            <h2 className="text-3xl md:text-5xl font-bold mt-4 mb-4">
+              Experience Assessify
+            </h2>
+            <p className="text-gray-400 text-lg">
+              Choose a demo account to explore the platform
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            <div
+              className={cn(
+                "relative cursor-pointer rounded-2xl border-2 p-8 transition-all duration-300 hover:scale-105 group",
+                selectedDemoRole === "student"
+                  ? "border-emerald-500 bg-emerald-500/10"
+                  : "border-white/10 bg-white/5 hover:border-emerald-500/30"
+              )}
+              onClick={() => !isDemoLoading && handleDemoLogin("student")}
+            >
+              <div className="flex flex-col items-center space-y-4 text-center">
+                <div className="p-4 rounded-full transition-colors bg-white/5 group-hover:bg-emerald-500/20">
+                  <GraduationCap className="h-12 w-12 text-gray-400 group-hover:text-emerald-400 transition-colors" />
+                </div>
+                <div className="space-y-2">
+                  <p
+                    className={cn(
+                      "text-xl font-semibold",
+                      selectedDemoRole === "student"
+                        ? "text-emerald-400"
+                        : "text-white"
+                    )}
+                  >
+                    Student Demo
+                  </p>
+                  <p className="text-sm text-gray-400">
+                    Take assessments and view your results
+                  </p>
+                </div>
+                {isDemoLoading && selectedDemoRole === "student" && (
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-emerald-500"></div>
+                )}
+              </div>
+              {selectedDemoRole === "student" && !isDemoLoading && (
+                <div className="absolute right-4 top-4">
+                  <div className="h-3 w-3 rounded-full bg-emerald-500 animate-pulse" />
+                </div>
+              )}
+            </div>
+
+            <div
+              className={cn(
+                "relative cursor-pointer rounded-2xl border-2 p-8 transition-all duration-300 hover:scale-105 group",
+                selectedDemoRole === "teacher"
+                  ? "border-emerald-500 bg-emerald-500/10"
+                  : "border-white/10 bg-white/5 hover:border-emerald-500/30"
+              )}
+              onClick={() => !isDemoLoading && handleDemoLogin("teacher")}
+            >
+              <div className="flex flex-col items-center space-y-4 text-center">
+                <div className="p-4 rounded-full transition-colors bg-white/5 group-hover:bg-emerald-500/20">
+                  <Users className="h-12 w-12 text-gray-400 group-hover:text-emerald-400 transition-colors" />
+                </div>
+                <div className="space-y-2">
+                  <p
+                    className={cn(
+                      "text-xl font-semibold",
+                      selectedDemoRole === "teacher"
+                        ? "text-emerald-400"
+                        : "text-white"
+                    )}
+                  >
+                    Teacher Demo
+                  </p>
+                  <p className="text-sm text-gray-400">
+                    Create and manage assessments
+                  </p>
+                </div>
+                {isDemoLoading && selectedDemoRole === "teacher" && (
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-emerald-500"></div>
+                )}
+              </div>
+              {selectedDemoRole === "teacher" && !isDemoLoading && (
+                <div className="absolute right-4 top-4">
+                  <div className="h-3 w-3 rounded-full bg-emerald-500 animate-pulse" />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials Section */}
       <section
         id="testimonials"
-        className="py-20 px-4 bg-gradient-to-b from-[#0a0a0a] to-[#000000] relative overflow-hidden"
+        className="pt-40 pb-20 px-4 bg-gradient-to-b from-[#0a0a0a] to-[#000000] relative overflow-hidden"
       >
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -664,7 +824,7 @@ export default function LandingPage() {
       </section>
 
       {/* FAQ Section */}
-      <section id="faq" className="py-20 px-4 bg-[#000000]">
+      <section id="faq" className="pt-40 pb-20 px-4 bg-[#000000]">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-16">
             <span className="text-emerald-500 text-sm font-medium tracking-wider uppercase">
@@ -719,12 +879,14 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="flex items-center gap-2">
-              <Image
-                src="/logo-white.png"
-                alt="Assessify"
-                width={120}
-                height={32}
-              />
+              <a href={process.env.NEXT_PUBLIC_URL}>
+                <Image
+                  src="/logo-white.png"
+                  alt="Assessify"
+                  width={120}
+                  height={32}
+                />
+              </a>
             </div>
 
             <div className="flex flex-wrap justify-center gap-8 text-gray-400">
@@ -736,6 +898,12 @@ export default function LandingPage() {
               </a>
               <a href="#faq" className="hover:text-white transition">
                 FAQ
+              </a>
+              <a href={process.env.NEXT_PUBLIC_API_URL} className="hover:text-white transition">
+                API
+              </a>
+              <a href={`${process.env.NEXT_PUBLIC_API_URL}/redoc`} className="hover:text-white transition">
+                Redoc
               </a>
               <Link href="/login" className="hover:text-white transition">
                 Login

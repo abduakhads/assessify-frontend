@@ -20,6 +20,7 @@ import {
   Globe,
   Twitter,
   ArrowRight,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import axios from "axios";
@@ -37,7 +38,7 @@ const features = [
   {
     title: "Quiz Management",
     description:
-      "Students can attempt quizzes with per-question time limits; teachers can create, manage, and analyze quizzes with multiple question types.",
+      "Create, manage, and analyze quizzes with per-question time limits and multiple question types. Generate quizzes instantly with our AI.",
     image: "/features/dark/Quiz Management teacher.png",
     imageAlt: "/features/dark/Quiz attempt student.png",
     icon: ClipboardList,
@@ -166,7 +167,7 @@ export default function LandingPage() {
         {
           username,
           password,
-        }
+        },
       );
 
       const { access: accessToken, refresh: refreshToken } = response.data;
@@ -365,7 +366,12 @@ export default function LandingPage() {
           </h1>
 
           <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10">
-            A comprehensive platform for teachers and students. Create quizzes,
+            A comprehensive platform for teachers and students. Create quizzes
+            with{" "}
+            <span className="text-emerald-400 whitespace-nowrap">
+              <Sparkles className="w-5 h-5 inline align-text-bottom" /> AI
+              generation,
+            </span>{" "}
             manage classrooms, and track performance — all in one place.
           </p>
 
@@ -539,7 +545,7 @@ export default function LandingPage() {
                 "relative cursor-pointer rounded-2xl border-2 p-8 transition-all duration-300 hover:scale-105 group",
                 selectedDemoRole === "student"
                   ? "border-emerald-500 bg-emerald-500/10"
-                  : "border-white/10 bg-white/5 hover:border-emerald-500/30"
+                  : "border-white/10 bg-white/5 hover:border-emerald-500/30",
               )}
               onClick={() => !isDemoLoading && handleDemoLogin("student")}
             >
@@ -553,7 +559,7 @@ export default function LandingPage() {
                       "text-xl font-semibold",
                       selectedDemoRole === "student"
                         ? "text-emerald-400"
-                        : "text-white"
+                        : "text-white",
                     )}
                   >
                     Student Demo
@@ -578,7 +584,7 @@ export default function LandingPage() {
                 "relative cursor-pointer rounded-2xl border-2 p-8 transition-all duration-300 hover:scale-105 group",
                 selectedDemoRole === "teacher"
                   ? "border-emerald-500 bg-emerald-500/10"
-                  : "border-white/10 bg-white/5 hover:border-emerald-500/30"
+                  : "border-white/10 bg-white/5 hover:border-emerald-500/30",
               )}
               onClick={() => !isDemoLoading && handleDemoLogin("teacher")}
             >
@@ -592,7 +598,7 @@ export default function LandingPage() {
                       "text-xl font-semibold",
                       selectedDemoRole === "teacher"
                         ? "text-emerald-400"
-                        : "text-white"
+                        : "text-white",
                     )}
                   >
                     Teacher Demo
@@ -899,10 +905,16 @@ export default function LandingPage() {
               <a href="#faq" className="hover:text-white transition">
                 FAQ
               </a>
-              <a href={process.env.NEXT_PUBLIC_API_URL} className="hover:text-white transition">
+              <a
+                href={process.env.NEXT_PUBLIC_API_URL}
+                className="hover:text-white transition"
+              >
                 API
               </a>
-              <a href={`${process.env.NEXT_PUBLIC_API_URL}/redoc`} className="hover:text-white transition">
+              <a
+                href={`${process.env.NEXT_PUBLIC_API_URL}/redoc`}
+                className="hover:text-white transition"
+              >
                 Redoc
               </a>
               <Link href="/login" className="hover:text-white transition">

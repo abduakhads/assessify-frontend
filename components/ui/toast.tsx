@@ -20,7 +20,7 @@ export function Toast({ message, type, onClose, duration = 3000 }: ToastProps) {
   }, [duration, onClose]);
 
   return (
-    <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-top-2 duration-300">
+    <div className="fixed top-4 right-4 z-[9999] animate-in slide-in-from-top-2 duration-300">
       <div
         className={`flex items-start gap-3 p-4 rounded-lg shadow-lg max-w-md ${
           type === "success"

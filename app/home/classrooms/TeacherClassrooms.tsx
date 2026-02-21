@@ -2,7 +2,16 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Plus, Users, ArrowLeft, Edit, Trash2, Clock, X } from "lucide-react";
+import {
+  Plus,
+  Users,
+  ArrowLeft,
+  Edit,
+  Trash2,
+  Clock,
+  X,
+  Sparkles,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Dialog } from "@/components/ui/dialog";
@@ -16,7 +25,7 @@ import type { Classroom, Quiz, Question, Answer } from "@/types";
 export default function TeacherClassrooms() {
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
   const [selectedClassroom, setSelectedClassroom] = useState<Classroom | null>(
-    null
+    null,
   );
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null);
@@ -56,6 +65,15 @@ export default function TeacherClassrooms() {
   >([]);
   const [questionLoading, setQuestionLoading] = useState(false);
   const [deleteQuestionLoading, setDeleteQuestionLoading] = useState(false);
+  const [showGenerateDialog, setShowGenerateDialog] = useState(false);
+  const [generateNumQuestions, setGenerateNumQuestions] = useState("5");
+  const [generateIsWritten, setGenerateIsWritten] = useState(false);
+  const [generateNumAnswers, setGenerateNumAnswers] = useState("4");
+  const [generateNumCorrectAnswers, setGenerateNumCorrectAnswers] =
+    useState("1");
+  const [generateTimeLimit, setGenerateTimeLimit] = useState("");
+  const [generateText, setGenerateText] = useState("");
+  const [generateLoading, setGenerateLoading] = useState(false);
   const [toast, setToast] = useState<{
     message: string;
     type: "success" | "error";
@@ -82,7 +100,7 @@ export default function TeacherClassrooms() {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
-          }
+          },
         );
 
         if (res.ok) {
@@ -190,7 +208,7 @@ export default function TeacherClassrooms() {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-        }
+        },
       );
 
       if (res.ok) {
@@ -236,7 +254,7 @@ export default function TeacherClassrooms() {
           body: JSON.stringify({
             name: classroomName,
           }),
-        }
+        },
       );
 
       if (res.ok) {
@@ -289,7 +307,7 @@ export default function TeacherClassrooms() {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-        }
+        },
       );
 
       if (res.ok) {
@@ -330,7 +348,7 @@ export default function TeacherClassrooms() {
           body: JSON.stringify({
             name: editClassroomName,
           }),
-        }
+        },
       );
 
       if (res.ok) {
@@ -382,7 +400,7 @@ export default function TeacherClassrooms() {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-        }
+        },
       );
 
       if (res.status === 204) {
@@ -456,7 +474,7 @@ export default function TeacherClassrooms() {
             is_active: quizIsActive,
             allowed_attempts: quizAllowedAttempts,
           }),
-        }
+        },
       );
 
       if (res.status === 201) {
@@ -516,7 +534,7 @@ export default function TeacherClassrooms() {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-        }
+        },
       );
 
       if (res.ok) {
@@ -571,7 +589,7 @@ export default function TeacherClassrooms() {
             is_active: quizIsActive,
             allowed_attempts: quizAllowedAttempts,
           }),
-        }
+        },
       );
 
       if (res.ok) {
@@ -619,7 +637,7 @@ export default function TeacherClassrooms() {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-        }
+        },
       );
 
       if (res.status === 204) {
@@ -655,14 +673,14 @@ export default function TeacherClassrooms() {
       setHasMultipleAnswers(question.has_multiple_answers);
       setIsWritten(question.is_written);
       setTimeLimit(
-        question.time_limit > 0 ? question.time_limit.toString() : ""
+        question.time_limit > 0 ? question.time_limit.toString() : "",
       );
       setAnswers(
         question.answers.map((a) => ({
           text: a.text,
           is_correct: a.is_correct,
           id: a.id,
-        }))
+        })),
       );
     } else {
       // Create mode
@@ -777,7 +795,7 @@ export default function TeacherClassrooms() {
               is_written: isWritten,
               time_limit: timeLimit === "" ? 0 : parseInt(timeLimit),
             }),
-          }
+          },
         );
 
         if (!res.ok) throw new Error("Failed to update question");
@@ -793,7 +811,7 @@ export default function TeacherClassrooms() {
               "Content-Type": "application/json",
             },
             body: JSON.stringify(questionPayload),
-          }
+          },
         );
 
         if (res.status !== 201) throw new Error("Failed to create question");
@@ -815,7 +833,7 @@ export default function TeacherClassrooms() {
 
         // Delete removed answers
         const answersToDelete = existingAnswerIds.filter(
-          (id) => !currentAnswerIds.includes(id)
+          (id) => !currentAnswerIds.includes(id),
         );
         for (const answerId of answersToDelete) {
           await fetch(
@@ -825,7 +843,7 @@ export default function TeacherClassrooms() {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
               },
-            }
+            },
           );
         }
       }
@@ -846,7 +864,7 @@ export default function TeacherClassrooms() {
                 text: answer.text,
                 is_correct: answer.is_correct,
               }),
-            }
+            },
           );
         } else {
           // Create new answer
@@ -904,7 +922,7 @@ export default function TeacherClassrooms() {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-        }
+        },
       );
 
       if (res.status === 204) {
@@ -928,6 +946,194 @@ export default function TeacherClassrooms() {
       });
     } finally {
       setDeleteQuestionLoading(false);
+    }
+  };
+
+  const handleGenerateQuestions = async () => {
+    if (!selectedQuiz) {
+      setToast({ message: "No quiz selected", type: "error" });
+      return;
+    }
+
+    if (!generateText.trim()) {
+      setToast({ message: "Please enter source text", type: "error" });
+      return;
+    }
+
+    const numQuestions = parseInt(generateNumQuestions);
+    if (
+      !generateNumQuestions ||
+      isNaN(numQuestions) ||
+      numQuestions < 1 ||
+      numQuestions > 50
+    ) {
+      setToast({
+        message: "Number of questions must be between 1 and 50",
+        type: "error",
+      });
+      return;
+    }
+
+    if (!generateIsWritten) {
+      const numAnswers = parseInt(generateNumAnswers);
+      if (
+        !generateNumAnswers ||
+        isNaN(numAnswers) ||
+        numAnswers < 2 ||
+        numAnswers > 10
+      ) {
+        setToast({
+          message: "Number of answers must be between 2 and 10",
+          type: "error",
+        });
+        return;
+      }
+
+      const numCorrectAnswers = parseInt(generateNumCorrectAnswers);
+      if (
+        !generateNumCorrectAnswers ||
+        isNaN(numCorrectAnswers) ||
+        numCorrectAnswers < 1
+      ) {
+        setToast({
+          message: "Number of correct answers must be at least 1",
+          type: "error",
+        });
+        return;
+      }
+
+      if (numCorrectAnswers > numAnswers) {
+        setToast({
+          message: "Number of correct answers cannot exceed number of answers",
+          type: "error",
+        });
+        return;
+      }
+    }
+
+    setGenerateLoading(true);
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (!accessToken) {
+      setToast({ message: "No access token found", type: "error" });
+      setGenerateLoading(false);
+      return;
+    }
+
+    try {
+      // Call API to generate questions
+      const response = await fetch("/api/generate-quiz", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          text: generateText,
+          numQuestions: parseInt(generateNumQuestions),
+          numAnswers: generateIsWritten ? 1 : parseInt(generateNumAnswers),
+          numCorrectAnswers: generateIsWritten
+            ? 1
+            : parseInt(generateNumCorrectAnswers),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate questions");
+      }
+
+      const generatedQuestions = await response.json();
+
+      // Process each generated question
+      const createdQuestions: Question[] = [];
+
+      for (const genQuestion of generatedQuestions) {
+        // Create question
+        const questionPayload = {
+          quiz: selectedQuiz.id,
+          text: genQuestion.question,
+          has_multiple_answers: generateIsWritten
+            ? false
+            : parseInt(generateNumCorrectAnswers) > 1,
+          is_written: generateIsWritten,
+          time_limit:
+            generateTimeLimit === "" ? 0 : parseInt(generateTimeLimit),
+        };
+
+        const questionRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/questions/`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify(questionPayload),
+          },
+        );
+
+        if (!questionRes.ok) {
+          throw new Error(`Failed to create question: ${genQuestion.question}`);
+        }
+
+        const createdQuestion = await questionRes.json();
+
+        // Create answers for the question
+        if (genQuestion.answers && genQuestion.answers.length > 0) {
+          for (const answer of genQuestion.answers) {
+            const answerPayload = {
+              question: createdQuestion.id,
+              text: answer.text,
+              is_correct: generateIsWritten ? true : answer.isCorrect,
+            };
+
+            const answerRes = await fetch(
+              `${process.env.NEXT_PUBLIC_API_URL}/api/answers/`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${accessToken}`,
+                },
+                body: JSON.stringify(answerPayload),
+              },
+            );
+
+            if (!answerRes.ok) {
+              console.error(
+                `Failed to create answer for question ${createdQuestion.id}`,
+              );
+            }
+          }
+        }
+
+        createdQuestions.push(createdQuestion);
+      }
+
+      setToast({
+        message: `Successfully generated ${createdQuestions.length} question(s)`,
+        type: "success",
+      });
+
+      setShowGenerateDialog(false);
+      setGenerateText("");
+      setGenerateNumQuestions("5");
+      setGenerateIsWritten(false);
+      setGenerateNumAnswers("4");
+      setGenerateNumCorrectAnswers("1");
+      setGenerateTimeLimit("");
+
+      // Refresh the questions list
+      await fetchQuestions(selectedQuiz.id);
+    } catch (error) {
+      setToast({
+        message:
+          error instanceof Error
+            ? error.message
+            : "Failed to generate questions",
+        type: "error",
+      });
+    } finally {
+      setGenerateLoading(false);
     }
   };
 
@@ -1212,13 +1418,23 @@ export default function TeacherClassrooms() {
           <div>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
               <h2 className="text-xl font-semibold">Questions</h2>
-              <Button
-                onClick={() => handleOpenQuestionDialog()}
-                className="cursor-pointer w-full sm:w-auto"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add Question
-              </Button>
+              <div className="flex gap-2 w-full sm:w-auto">
+                <Button
+                  onClick={() => setShowGenerateDialog(true)}
+                  variant="outline"
+                  className="cursor-pointer flex-1 sm:flex-initial"
+                >
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Generate
+                </Button>
+                <Button
+                  onClick={() => handleOpenQuestionDialog()}
+                  className="cursor-pointer flex-1 sm:flex-initial"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Question
+                </Button>
+              </div>
             </div>
 
             {loadingQuestions ? (
@@ -1864,8 +2080,8 @@ export default function TeacherClassrooms() {
               {questionLoading
                 ? "Saving..."
                 : editingQuestion
-                ? "Save Changes"
-                : "Create Question"}
+                  ? "Save Changes"
+                  : "Create Question"}
             </Button>
           </div>
         </div>
@@ -1898,6 +2114,122 @@ export default function TeacherClassrooms() {
               className="cursor-pointer bg-destructive hover:bg-destructive/90"
             >
               {deleteQuestionLoading ? "Deleting..." : "Delete Question"}
+            </Button>
+          </div>
+        </div>
+      </Dialog>
+
+      {/* Generate Questions Dialog */}
+      <Dialog
+        isOpen={showGenerateDialog}
+        onClose={() => setShowGenerateDialog(false)}
+        title="Generate Questions with AI"
+      >
+        <div className="space-y-4 max-h-[70vh] overflow-y-auto px-1">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="generateNumQuestions">Number of Questions</Label>
+              <Input
+                id="generateNumQuestions"
+                type="number"
+                min="1"
+                max="50"
+                value={generateNumQuestions}
+                onChange={(e) => setGenerateNumQuestions(e.target.value)}
+                placeholder="Enter number of questions"
+              />
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="generateIsWritten"
+                checked={generateIsWritten}
+                onCheckedChange={(checked) =>
+                  setGenerateIsWritten(checked as boolean)
+                }
+              />
+              <Label htmlFor="generateIsWritten" className="cursor-pointer">
+                Written Answer Questions
+              </Label>
+            </div>
+
+            {!generateIsWritten && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="generateNumAnswers">
+                    Number of Answers per Question
+                  </Label>
+                  <Input
+                    id="generateNumAnswers"
+                    type="number"
+                    min="2"
+                    max="10"
+                    value={generateNumAnswers}
+                    onChange={(e) => setGenerateNumAnswers(e.target.value)}
+                    placeholder="Enter number of answers"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="generateNumCorrectAnswers">
+                    Number of Correct Answers per Question
+                  </Label>
+                  <Input
+                    id="generateNumCorrectAnswers"
+                    type="number"
+                    min="1"
+                    max={parseInt(generateNumAnswers) || 10}
+                    value={generateNumCorrectAnswers}
+                    onChange={(e) =>
+                      setGenerateNumCorrectAnswers(e.target.value)
+                    }
+                    placeholder="Enter number of correct answers"
+                  />
+                </div>
+              </>
+            )}
+
+            <div className="space-y-2">
+              <Label htmlFor="generateTimeLimit">
+                Time Limit per Question (seconds, optional)
+              </Label>
+              <Input
+                id="generateTimeLimit"
+                type="number"
+                min="0"
+                value={generateTimeLimit}
+                onChange={(e) => setGenerateTimeLimit(e.target.value)}
+                placeholder="Leave empty for no time limit"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="generateText">Source Text</Label>
+              <textarea
+                id="generateText"
+                value={generateText}
+                onChange={(e) => setGenerateText(e.target.value)}
+                placeholder="Enter the text to generate questions from..."
+                className="w-full min-h-[200px] p-2 border rounded-md bg-background"
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-2 justify-end px-1 pt-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowGenerateDialog(false)}
+              disabled={generateLoading}
+              className="cursor-pointer"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleGenerateQuestions}
+              disabled={generateLoading}
+              className="cursor-pointer"
+            >
+              {generateLoading ? "Generating..." : "Generate Questions"}
             </Button>
           </div>
         </div>

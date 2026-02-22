@@ -21,6 +21,17 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Toast } from "@/components/ui/toast";
 import { useNavigation } from "@/contexts/NavigationContext";
 import type { Classroom, Quiz, Question, Answer } from "@/types";
+import { shuffleArray } from "@/lib/utils";
+
+interface GeneratedAnswer {
+  text: string;
+  isCorrect: boolean;
+}
+
+interface GeneratedQuestion {
+  question: string;
+  answers: GeneratedAnswer[];
+}
 
 export default function TeacherClassrooms() {
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
@@ -1041,7 +1052,7 @@ export default function TeacherClassrooms() {
         throw new Error("Failed to generate questions");
       }
 
-      const generatedQuestions = await response.json();
+      const generatedQuestions: GeneratedQuestion[] = await response.json();
 
       // Process each generated question
       const createdQuestions: Question[] = [];
@@ -1079,7 +1090,8 @@ export default function TeacherClassrooms() {
 
         // Create answers for the question
         if (genQuestion.answers && genQuestion.answers.length > 0) {
-          for (const answer of genQuestion.answers) {
+          const shuffledAnswers = shuffleArray(genQuestion.answers);
+          for (const answer of shuffledAnswers) {
             const answerPayload = {
               question: createdQuestion.id,
               text: answer.text,

@@ -33,7 +33,7 @@ export default function StudentClassrooms() {
     message: string;
     type: "success" | "error";
   } | null>(null);
-  const { setBackButton, setHideSidebar } = useNavigation();
+  const { setBackButton, setHideSidebar, setOnClose } = useNavigation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const prevUrlRef = useRef<string>("");
@@ -126,15 +126,30 @@ export default function StudentClassrooms() {
     }
   }, [searchParams]);
 
-  // Hide sidebar while taking a quiz
+  // Hide sidebar and register close handler while taking a quiz
   useEffect(() => {
-    setHideSidebar(!!activeAttemptId);
-    return () => setHideSidebar(false);
-  }, [activeAttemptId, setHideSidebar]);
+    if (activeAttemptId) {
+      setHideSidebar(true);
+      setOnClose(() => () => setActiveAttemptId(null));
+    } else {
+      setHideSidebar(false);
+      setOnClose(null);
+    }
+    return () => {
+      setHideSidebar(false);
+      setOnClose(null);
+    };
+  }, [activeAttemptId, setHideSidebar, setOnClose]);
 
   // Set back button based on current view
   useEffect(() => {
-    if (selectedQuiz && selectedClassroom) {
+    if (activeAttemptId && selectedQuiz && selectedClassroom) {
+      setBackButton({
+        show: true,
+        label: "Back",
+        onClick: () => setActiveAttemptId(null),
+      });
+    } else if (selectedQuiz && selectedClassroom) {
       setBackButton({
         show: true,
         label: "Back",
@@ -152,7 +167,7 @@ export default function StudentClassrooms() {
 
     // Cleanup
     return () => setBackButton(null);
-  }, [selectedClassroom, selectedQuiz]);
+  }, [selectedClassroom, selectedQuiz, activeAttemptId]);
 
   const handleEnroll = async () => {
     if (!enrollCode.trim()) {

@@ -13,6 +13,7 @@ import {
   ArrowLeft,
   Moon,
   Sun,
+  X,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useNavigation } from "@/contexts/NavigationContext";
@@ -29,7 +30,7 @@ export function StudentSidebar({ className }: StudentSidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const { backButton, hideSidebar } = useNavigation();
+  const { backButton, hideSidebar, onClose } = useNavigation();
   const { theme, setTheme, systemTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -109,24 +110,49 @@ export function StudentSidebar({ className }: StudentSidebarProps) {
           ) : null}
         </div>
         <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setTheme(currentTheme === "dark" ? "light" : "dark")}
-          >
-            {!mounted ? (
-              <Sun className="h-5 w-5" />
-            ) : currentTheme === "dark" ? (
-              <Sun className="h-5 w-5" />
-            ) : (
-              <Moon className="h-5 w-5" />
-            )}
-          </Button>
-          <Button variant="ghost" size="icon" onClick={handleLogout}>
-            <LogOut className="h-5 w-5" />
-          </Button>
+          {hideSidebar && onClose ? (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="cursor-pointer"
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          ) : (
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setTheme(currentTheme === "dark" ? "light" : "dark")}
+              >
+                {!mounted ? (
+                  <Sun className="h-5 w-5" />
+                ) : currentTheme === "dark" ? (
+                  <Sun className="h-5 w-5" />
+                ) : (
+                  <Moon className="h-5 w-5" />
+                )}
+              </Button>
+              <Button variant="ghost" size="icon" onClick={handleLogout}>
+                <LogOut className="h-5 w-5" />
+              </Button>
+            </>
+          )}
         </div>
       </div>
+
+      {/* Desktop close button (visible only when sidebar is hidden during quiz) */}
+      {hideSidebar && onClose && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onClose}
+          className="hidden lg:flex fixed top-4 right-4 z-50 cursor-pointer bg-background/80 backdrop-blur-md border rounded-lg shadow"
+        >
+          <X className="h-5 w-5" />
+        </Button>
+      )}
 
       {/* Mobile Bottom Navigation Bar */}
       <nav className={cn("lg:hidden fixed bottom-0 left-0 right-0 z-40 pb-safe", hideSidebar && "hidden")}>

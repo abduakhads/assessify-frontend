@@ -29,7 +29,7 @@ export function StudentSidebar({ className }: StudentSidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const { backButton } = useNavigation();
+  const { backButton, hideSidebar } = useNavigation();
   const { theme, setTheme, systemTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -129,7 +129,7 @@ export function StudentSidebar({ className }: StudentSidebarProps) {
       </div>
 
       {/* Mobile Bottom Navigation Bar */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 pb-safe">
+      <nav className={cn("lg:hidden fixed bottom-0 left-0 right-0 z-40 pb-safe", hideSidebar && "hidden")}>
         <div className="mx-4 mb-4">
           <div className="bg-background/30 backdrop-blur-md border border-white/10 rounded-full shadow-xl p-3">
             <div className="flex items-center justify-around gap-1">
@@ -163,6 +163,7 @@ export function StudentSidebar({ className }: StudentSidebarProps) {
       <aside
         className={cn(
           "hidden lg:flex fixed top-0 left-0 w-64 flex-col my-4 ml-4 h-[calc(100vh-2rem)] rounded-2xl border border-white/10 bg-background/80 backdrop-blur-md shadow-xl",
+          hideSidebar && "lg:hidden",
           className
         )}
       >

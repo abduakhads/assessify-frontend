@@ -33,7 +33,7 @@ export default function StudentClassrooms() {
     message: string;
     type: "success" | "error";
   } | null>(null);
-  const { setBackButton } = useNavigation();
+  const { setBackButton, setHideSidebar } = useNavigation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const prevUrlRef = useRef<string>("");
@@ -125,6 +125,12 @@ export default function StudentClassrooms() {
       setAttempts([]);
     }
   }, [searchParams]);
+
+  // Hide sidebar while taking a quiz
+  useEffect(() => {
+    setHideSidebar(!!activeAttemptId);
+    return () => setHideSidebar(false);
+  }, [activeAttemptId, setHideSidebar]);
 
   // Set back button based on current view
   useEffect(() => {

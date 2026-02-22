@@ -126,6 +126,23 @@ export default function StudentClassrooms() {
     }
   }, [searchParams]);
 
+  // Intercept browser back button while quiz is active
+  useEffect(() => {
+    if (!activeAttemptId) return;
+
+    // Push a guard state so the browser has something to "go back" to
+    window.history.pushState(null, "", window.location.href);
+
+    const handlePopState = () => {
+      // Re-push the guard so repeated back presses are also intercepted
+      window.history.pushState(null, "", window.location.href);
+      setActiveAttemptId(null);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [activeAttemptId, setActiveAttemptId]);
+
   // Hide sidebar and register close handler while taking a quiz
   useEffect(() => {
     if (activeAttemptId) {
@@ -141,14 +158,10 @@ export default function StudentClassrooms() {
     };
   }, [activeAttemptId, setHideSidebar, setOnClose]);
 
-  // Set back button based on current view
+  // Set back button based on current view (no back button while taking quiz)
   useEffect(() => {
-    if (activeAttemptId && selectedQuiz && selectedClassroom) {
-      setBackButton({
-        show: true,
-        label: "Back",
-        onClick: () => setActiveAttemptId(null),
-      });
+    if (activeAttemptId) {
+      setBackButton(null);
     } else if (selectedQuiz && selectedClassroom) {
       setBackButton({
         show: true,

@@ -15,6 +15,10 @@ interface NavigationContextType {
       onClick: () => void;
     } | null
   ) => void;
+  hideSidebar: boolean;
+  setHideSidebar: (hide: boolean) => void;
+  onClose: (() => void) | null;
+  setOnClose: (handler: (() => void) | null) => void;
 }
 
 const NavigationContext = createContext<NavigationContextType | undefined>(
@@ -27,9 +31,11 @@ export function NavigationProvider({ children }: { children: ReactNode }) {
     label: string;
     onClick: () => void;
   } | null>(null);
+  const [hideSidebar, setHideSidebar] = useState(false);
+  const [onClose, setOnClose] = useState<(() => void) | null>(null);
 
   return (
-    <NavigationContext.Provider value={{ backButton, setBackButton }}>
+    <NavigationContext.Provider value={{ backButton, setBackButton, hideSidebar, setHideSidebar, onClose, setOnClose }}>
       {children}
     </NavigationContext.Provider>
   );

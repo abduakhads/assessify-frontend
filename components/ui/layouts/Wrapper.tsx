@@ -2,8 +2,33 @@
 import { useEffect, useState } from "react";
 import { StudentSidebar } from "../student-sidebar";
 import { TeacherSidebar } from "../teacher-sidebar";
-import { NavigationProvider } from "@/contexts/NavigationContext";
+import { NavigationProvider, useNavigation } from "@/contexts/NavigationContext";
 import api from "@/lib/axios";
+
+function WrapperInner({
+  role,
+  children,
+}: {
+  role: string | null;
+  children: React.ReactNode;
+}) {
+  const { hideSidebar } = useNavigation();
+
+  return (
+    <div className="flex min-h-screen">
+      {role === "teacher" ? <TeacherSidebar /> : <StudentSidebar />}
+      <main
+        className={`flex-1 pt-16 lg:pt-0 ${
+          hideSidebar
+            ? "pb-0 lg:ml-0"
+            : "pb-24 lg:pb-0 lg:ml-[272px]"
+        }`}
+      >
+        {children}
+      </main>
+    </div>
+  );
+}
 
 export default function Wrapper({ children }: { children: React.ReactNode }) {
   const [role, setRole] = useState<string | null>(null);
@@ -37,12 +62,7 @@ export default function Wrapper({ children }: { children: React.ReactNode }) {
 
   return (
     <NavigationProvider>
-      <div className="flex min-h-screen">
-        {role === "teacher" ? <TeacherSidebar /> : <StudentSidebar />}
-        <main className="flex-1 pt-16 pb-24 lg:pt-0 lg:pb-0 lg:ml-[272px]">
-          {children}
-        </main>
-      </div>
+      <WrapperInner role={role}>{children}</WrapperInner>
     </NavigationProvider>
   );
 }

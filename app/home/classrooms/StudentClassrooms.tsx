@@ -33,7 +33,7 @@ export default function StudentClassrooms() {
     message: string;
     type: "success" | "error";
   } | null>(null);
-  const { setBackButton } = useNavigation();
+  const { setBackButton, setHideSidebar, setOnClose } = useNavigation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const prevUrlRef = useRef<string>("");
@@ -126,9 +126,43 @@ export default function StudentClassrooms() {
     }
   }, [searchParams]);
 
-  // Set back button based on current view
+  // Intercept browser back button while quiz is active
   useEffect(() => {
-    if (selectedQuiz && selectedClassroom) {
+    if (!activeAttemptId) return;
+
+    // Push a guard state so the browser has something to "go back" to
+    window.history.pushState(null, "", window.location.href);
+
+    const handlePopState = () => {
+      // Re-push the guard so repeated back presses are also intercepted
+      window.history.pushState(null, "", window.location.href);
+      setActiveAttemptId(null);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [activeAttemptId, setActiveAttemptId]);
+
+  // Hide sidebar and register close handler while taking a quiz
+  useEffect(() => {
+    if (activeAttemptId) {
+      setHideSidebar(true);
+      setOnClose(() => () => setActiveAttemptId(null));
+    } else {
+      setHideSidebar(false);
+      setOnClose(null);
+    }
+    return () => {
+      setHideSidebar(false);
+      setOnClose(null);
+    };
+  }, [activeAttemptId, setHideSidebar, setOnClose]);
+
+  // Set back button based on current view (no back button while taking quiz)
+  useEffect(() => {
+    if (activeAttemptId) {
+      setBackButton(null);
+    } else if (selectedQuiz && selectedClassroom) {
       setBackButton({
         show: true,
         label: "Back",
@@ -146,7 +180,7 @@ export default function StudentClassrooms() {
 
     // Cleanup
     return () => setBackButton(null);
-  }, [selectedClassroom, selectedQuiz]);
+  }, [selectedClassroom, selectedQuiz, activeAttemptId]);
 
   const handleEnroll = async () => {
     if (!enrollCode.trim()) {

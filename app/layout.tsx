@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Assessify App",
   description: "Assessify App",
+  icons: {
+    icon: "/logoself.png",
+  },
 };
 
 export default function RootLayout({

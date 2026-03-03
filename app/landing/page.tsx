@@ -125,6 +125,11 @@ const faqs = [
     answer:
       "Yes, Assessify is currently free to use for both teachers and students. We believe in making quality education tools accessible to everyone.",
   },
+  // {
+  //   question: "How can I get help or request integrations?",
+  //   answer:
+  //     "For questions, support, or integration requests, feel free to reach out to us at contact@assessify.app. We're always happy to help and explore new integration opportunities!",
+  // },
 ];
 
 export default function LandingPage() {
@@ -842,16 +847,15 @@ export default function LandingPage() {
               answers
             </h2>
           </div>
-
           <div className="space-y-4">
             {faqs.map((faq, index) => (
               <div
                 key={index}
-                className="bg-[#000000] border border-white/10 rounded-xl overflow-hidden transition-all duration-300 hover:border-emerald-600/30"
+                className="bg-[#000000] border border-white/10 rounded-xl overflow-hidden transition-all duration-300 hover:border-emerald-500"
               >
                 <button
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                  className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-white/5 transition-colors duration-200"
+                  className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-emerald-500/10 transition-colors duration-200"
                 >
                   <span className="font-medium">{faq.question}</span>
                   <ChevronDown
@@ -877,6 +881,25 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
+          {/* Contact Section */}
+          <div className="mt-16 text-center">
+            <div className="bg-gradient-to-r from-emerald-900/50 to-emerald-800/30 border border-emerald-600/30 rounded-3xl p-8">
+              <h3 className="text-2xl font-bold mb-3">Still have questions?</h3>
+              <p className="text-gray-400 mb-4">
+                Need help, have questions, or want to discuss integrations with
+                your service?
+              </p>
+              <div className="flex items-center justify-center gap-2">
+                <span className="text-gray-400">Contact us at:</span>
+                <a
+                  href="mailto:contact@assessify.app"
+                  className="text-emerald-500 hover:text-emerald-400 font-medium transition-colors"
+                >
+                  contact@assessify.app
+                </a>
+              </div>
+            </div>
+          </div>{" "}
         </div>
       </section>
 

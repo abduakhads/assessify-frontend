@@ -895,7 +895,7 @@ export default function LandingPage() {
                 Need help, have questions, or want to discuss integrations with
                 your service?
               </p>
-              <div className="flex items-center justify-center gap-2">
+              <div className="flex flex-col md:flex-row items-center justify-center gap-2">
                 <span className="text-gray-400">Contact us at:</span>
                 <a
                   href="mailto:contact@assessify.app"

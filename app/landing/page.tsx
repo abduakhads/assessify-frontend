@@ -224,6 +224,7 @@ export default function LandingPage() {
                     alt="Assessify"
                     width={120}
                     height={32}
+                    priority
                   />
                 </a>
               </div>
@@ -282,7 +283,8 @@ export default function LandingPage() {
                     alt="Assessify"
                     width={120}
                     height={22}
-                    className="flex-shrink-0 object-contain "
+                    priority
+                    className="flex-shrink-0 object-contain"
                   />
                 </a>
               </div>
@@ -481,12 +483,13 @@ export default function LandingPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="relative w-full">
+                  <div className="relative w-full aspect-video">
                     <Image
                       src={feature.image}
                       alt={feature.title}
                       width={800}
                       height={450}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
                       className="w-full h-auto"
                     />
                   </div>
@@ -645,7 +648,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="relative mb-12 flex max-h-[600px] justify-center gap-6 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_80%,transparent)]">
+          <div className="relative mb-12 flex max-h-[600px] min-h-[600px] justify-center gap-6 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_80%,transparent)]">
             {/* Column 1 - Scrolling Down */}
             <div className="flex flex-col gap-6 animate-scroll-1">
               {[
@@ -789,7 +792,10 @@ export default function LandingPage() {
       <section className="py-20 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="bg-gradient-to-r from-emerald-900/50 to-emerald-800/30 border border-emerald-600/30 rounded-3xl p-8 md:p-16 text-center relative overflow-hidden">
-            <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
+            <div
+              className="absolute inset-0 opacity-10"
+              style={{ backgroundImage: "url('/grid.svg')" }}
+            ></div>
             <div className="relative z-10">
               <h2 className="text-3xl md:text-5xl font-bold mb-4">
                 Ready to Transform Your Classroom?
@@ -914,6 +920,7 @@ export default function LandingPage() {
                   alt="Assessify"
                   width={120}
                   height={32}
+                  priority
                 />
               </a>
             </div>

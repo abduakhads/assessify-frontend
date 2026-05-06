@@ -1,10 +1,17 @@
-import { Metadata } from "next";
+import { Metadata, Viewport } from "next";
 import {
   generateMetadata as genMeta,
   generateOrganizationSchema,
   generateWebsiteSchema,
   generateEducationalSchema,
 } from "@/lib/seo";
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
+  ],
+};
 
 export const metadata: Metadata = genMeta({
   title: "AI-Powered Quiz & Assessment Platform for Education",

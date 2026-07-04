@@ -430,7 +430,7 @@ export default function LandingPage() {
       {/* Features Section */}
       <section
         id="features"
-        className="py-20 px-4 bg-gradient-to-b from-[#000000] to-[#0a0a0a] relative overflow-hidden"
+        className="py-20 px-4 bg-gradient-to-b from-[#000000] to-[#000000] relative overflow-hidden"
       >
         <div className="bg-emerald-500 absolute -top-10 left-1/2 h-16 w-44 -translate-x-1/2 rounded-full opacity-40 blur-3xl select-none"></div>
         <div className="absolute top-0 left-1/2 h-px w-3/5 -translate-x-1/2 bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent transition-all ease-in-out"></div>
@@ -501,7 +501,7 @@ export default function LandingPage() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-20 px-4 bg-[#0a0a0a]">
+      {/* <section className="py-20 px-4 bg-[#0a0a0a]">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
@@ -530,10 +530,10 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Try Demo Section */}
-      <section id="demo" className="pt-40 pb-20 px-4 bg-[#0a0a0a]">
+      <section id="demo" className="pt-40 pb-20 px-4 bg-[#000000]">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <span className="text-emerald-500 text-sm font-medium tracking-wider uppercase">
@@ -632,25 +632,25 @@ export default function LandingPage() {
       {/* Testimonials Section */}
       <section
         id="testimonials"
-        className="pt-40 pb-20 px-4 bg-gradient-to-b from-[#0a0a0a] to-[#000000] relative overflow-hidden"
+        className="pt-40 pb-20 px-4 bg-gradient-to-b from-[#000000] to-[#000000] relative overflow-hidden"
       >
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <span className="text-emerald-500 text-sm font-medium tracking-wider uppercase">
-              Testimonials
+              Testimonial
             </span>
             <h2 className="text-3xl md:text-5xl font-bold mt-4">
-              What our users say
+              Share your experience
             </h2>
             <p className="text-gray-400 mt-4 max-w-xl mx-auto">
-              From teachers to students, Assessify has become an essential tool
+              From teachers to students, Assessify is becoming an essential tool
               for classrooms around the world.
             </p>
           </div>
 
-          <div className="relative mb-12 flex max-h-[600px] min-h-[600px] justify-center gap-6 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_80%,transparent)]">
+          {/* <div className="relative mb-12 flex max-h-[600px] min-h-[600px] justify-center gap-6 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_80%,transparent)]"> */}
             {/* Column 1 - Scrolling Down */}
-            <div className="flex flex-col gap-6 animate-scroll-1">
+            {/* <div className="flex flex-col gap-6 animate-scroll-1">
               {[
                 ...testimonials.slice(0, 2),
                 ...testimonials.slice(0, 2),
@@ -679,10 +679,10 @@ export default function LandingPage() {
                   </p>
                 </div>
               ))}
-            </div>
+            </div> */}
 
             {/* Column 2 - Scrolling Up */}
-            <div className="hidden md:flex flex-col gap-6 animate-scroll-2">
+            {/* <div className="hidden md:flex flex-col gap-6 animate-scroll-2">
               {[
                 ...testimonials.slice(2, 4),
                 ...testimonials.slice(2, 4),
@@ -711,10 +711,10 @@ export default function LandingPage() {
                   </p>
                 </div>
               ))}
-            </div>
+            </div> */}
 
             {/* Column 3 - Scrolling Down */}
-            <div className="hidden lg:flex flex-col gap-6 animate-scroll-3">
+            {/* <div className="hidden lg:flex flex-col gap-6 animate-scroll-3">
               {[
                 ...testimonials.slice(4, 6),
                 ...testimonials.slice(4, 6),
@@ -743,8 +743,8 @@ export default function LandingPage() {
                   </p>
                 </div>
               ))}
-            </div>
-          </div>
+            </div> */}
+          {/* </div> */}
 
           <div className="text-center">
             <a
@@ -759,7 +759,7 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <style jsx>{`
+        {/* <style jsx>{`
           @keyframes scroll {
             0% {
               transform: translateY(0);
@@ -785,7 +785,7 @@ export default function LandingPage() {
           .animate-scroll-3 {
             animation: scroll 20s linear infinite;
           }
-        `}</style>
+        `}</style> */}
       </section>
 
       {/* CTA Section */}
